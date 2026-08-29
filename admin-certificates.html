@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Certificate Management (Admin) — Up Skills Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="header"></div>
+<main>
+  <div class="page-head">
+    <div>
+      <h1>Certificate Management</h1>
+      <p>Review requests, approve, generate, manage and revoke certificates.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:16px">
+        <div class="field" style="flex:1;min-width:220px;margin:0">
+          <label for="searchBox">Search</label>
+          <input type="search" id="searchBox" placeholder="Search by name, certificate # or course…">
+        </div>
+        <div class="field" style="width:200px;margin:0">
+          <label for="statusFilter">Filter by status</label>
+          <select id="statusFilter">
+            <option value="">All statuses</option>
+            <option value="pending">Pending Review</option>
+            <option value="recommended">Trainer Recommended</option>
+            <option value="approved">Approved</option>
+            <option value="generated">Generated</option>
+            <option value="revoked">Revoked</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <button class="btn btn-ghost" id="resetBtn">Reset</button>
+      </div>
+      <div id="listLoading" class="loading"><div class="spinner"></div>Loading…</div>
+      <div id="listEmpty" class="empty-state" style="display:none">
+        <div class="icon">🗂️</div><p>No records match your search.</p>
+      </div>
+      <div id="listWrap" class="table-wrap" style="display:none"></div>
+    </div>
+  </div>
+</main>
+<div id="footer"></div>
+
+<div class="modal-overlay" id="revokeModal">
+  <div class="modal">
+    <div class="modal-head"><h3>Revoke Certificate</h3><button class="modal-close" onclick="document.getElementById('revokeModal').classList.remove('open')">✕</button></div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="revokeReason">Reason for revocation</label>
+        <textarea id="revokeReason" placeholder="e.g. Misrepresented completion information"></textarea>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:14px">
+        <button class="btn btn-ghost" onclick="document.getElementById('revokeModal').classList.remove('open')">Cancel</button>
+        <button class="btn btn-danger" id="confirmRevoke">Revoke Certificate</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="data/mock-data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/admin.js"></script>
+<script>initPage('admin');</script>
+</body>
+</html>

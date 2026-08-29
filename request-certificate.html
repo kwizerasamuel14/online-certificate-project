@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Request Certificate â€” Up Skills Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="header"></div>
+<main>
+  <div class="page-head">
+    <div>
+      <h1>Request Certificate</h1>
+      <p>Complete the form below to request your internship / training completion certificate.</p>
+    </div>
+  </div>
+
+  <form id="requestForm" class="card" novalidate>
+    <div class="card-body">
+
+      <!-- 1. Intern / Trainee Information -->
+      <section class="form-section">
+        <h2>1. Intern / Trainee Information</h2>
+        <div class="form-grid">
+          <div class="field full" id="f-fullName">
+            <label for="fullName">Trainee / Intern Name
+              <span class="hint">Write your name as you want it to appear on the certificate.</span>
+            </label>
+            <input type="text" id="fullName" placeholder="e.g. Kwizera Samuel" maxlength="80">
+            <span class="error-msg">Please enter your full name.</span>
+          </div>
+
+          <div class="field full" id="f-traineeId">
+            <label for="traineeId">Trainee ID
+              <span class="hint">Must be in CAPITAL LETTERS â€” Trainee: USH-TRA-YEAR-ID Â· Intern: USH-INT-YEAR-ID</span>
+            </label>
+            <input type="text" id="traineeId" placeholder="e.g. USH-INT-2026-00230" style="text-transform:uppercase">
+            <span class="error-msg">Format must be USH-TRA-YYYY-#### or USH-INT-YYYY-####.</span>
+          </div>
+
+          <div class="field full" id="f-program">
+            <label for="program">Your Program / Course</label>
+            <select id="program"></select>
+            <span class="error-msg">Please select your program or course.</span>
+          </div>
+
+          <div class="field" id="f-startDate">
+            <label for="startDate">Internship / Training Start Date</label>
+            <input type="date" id="startDate">
+            <span class="error-msg">Please choose the start date.</span>
+          </div>
+
+          <div class="field" id="f-endDate">
+            <label for="endDate">Internship / Training End Date</label>
+            <input type="date" id="endDate">
+            <span class="error-msg">End date must be after the start date.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Completion Information -->
+      <section class="form-section">
+        <h2>2. Completion Information</h2>
+        <div class="form-grid">
+          <div class="field full" id="f-projectName">
+            <label for="projectName">Project Name (worked on)</label>
+            <input type="text" id="projectName" placeholder="e.g. Up Skills Hub Online Certificate System" maxlength="120">
+            <span class="error-msg">Please enter your project name.</span>
+          </div>
+
+          <div class="field full" id="f-projectDescription">
+            <label for="projectDescription">Project Description
+              <span class="hint">Briefly describe the project or main activities completed during the internship.</span>
+            </label>
+            <textarea id="projectDescription" maxlength="1500"></textarea>
+            <span class="error-msg">Please describe your project.</span>
+          </div>
+
+          <div class="field full" id="f-accomplishments">
+            <label for="accomplishments">What did you accomplish during the training or internship?
+              <span class="hint">Describe the main tasks, skills, and responsibilities you completed.</span>
+            </label>
+            <textarea id="accomplishments" maxlength="1500"></textarea>
+            <span class="error-msg">Please describe what you accomplished.</span>
+          </div>
+
+          <div class="field" id="f-workLink">
+            <label for="workLink">Final Project / Work Link <span class="hint">(optional)</span></label>
+            <input type="url" id="workLink" placeholder="https://github.com/...">
+            <span class="error-msg">Please enter a valid URL starting with http(s)://.</span>
+          </div>
+
+          <div class="field" id="f-liveLink">
+            <label for="liveLink">Live Project Link <span class="hint">(optional)</span></label>
+            <input type="url" id="liveLink" placeholder="https://...">
+            <span class="error-msg">Please enter a valid URL starting with http(s)://.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Required Documents (interns, optional) -->
+      <section class="form-section">
+        <h2>3. Required Documents <span style="font-weight:400;color:var(--muted)">(for interns â€” optional)</span></h2>
+        <div class="form-grid">
+          <div class="field">
+            <label for="finalReport">Final Report</label>
+            <input type="file" id="finalReport" accept=".pdf,.docx,.zip">
+            <span class="hint">PDF, DOCX, ZIP â€” Maximum 10 MB</span>
+            <span class="error-msg" id="finalReport-err">File must be PDF, DOCX or ZIP, max 10 MB.</span>
+          </div>
+          <div class="field">
+            <label for="logbook">Logbook (interns only â€” optional)</label>
+            <input type="file" id="logbook" accept=".pdf,.docx,.zip" multiple>
+            <span class="hint">PDF, DOCX, ZIP â€” Maximum 10 MB each</span>
+            <span class="error-msg" id="logbook-err">Files must be PDF, DOCX or ZIP, max 10 MB.</span>
+          </div>
+          <div class="field full" id="f-sourceLink">
+            <label for="sourceLink">Final Project / Source Code Link <span class="hint">(optional)</span></label>
+            <input type="url" id="sourceLink" placeholder="[ Enter Link ]">
+            <span class="error-msg">Please enter a valid URL starting with http(s)://.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Self-Declaration -->
+      <section class="form-section">
+        <h2>4. Self-Declaration</h2>
+        <div class="field" id="f-declaration">
+          <label style="font-weight:400;display:flex;gap:10px;align-items:flex-start;cursor:pointer">
+            <input type="checkbox" id="declaration" style="width:auto;margin-top:4px">
+            <span>I confirm that I have completed my internship/project and that the information
+            and documents provided are accurate.</span>
+          </label>
+          <span class="error-msg">You must confirm the declaration before submitting.</span>
+        </div>
+      </section>
+
+      <!-- 5. Submit -->
+      <div style="display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap">
+        <a href="index.html" class="btn btn-ghost">Cancel</a>
+        <button type="submit" class="btn btn-primary" id="submitBtn">ðŸ“¨ Request Certificate</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Success screen -->
+  <div id="successScreen" style="display:none" class="card">
+    <div class="card-body" style="text-align:center;padding:48px 24px">
+      <div style="font-size:3rem">âœ…</div>
+      <h2>Certificate Request Submitted</h2>
+      <p style="max-width:560px;margin:8px auto 4px">
+        Your certificate request has been submitted successfully and is now
+        <strong style="color:var(--warning)">Pending Review</strong>.
+      </p>
+      <p style="max-width:560px;margin:0 auto 8px;color:var(--muted)">
+        Your trainer will review your internship completion before the request is sent
+        to the administrator for final approval.
+      </p>
+      <p><strong>Request ID: <span id="successReqId"></span></strong></p>
+      <p style="margin-top:8px">Certificate Request Status: <span class="badge badge-pending">Pending Review</span></p>
+      <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-primary" href="my-certificates.html">View My Requests</a>
+        <a class="btn btn-ghost" href="index.html">Back to Home</a>
+      </div>
+    </div>
+  </div>
+</main>
+<div id="footer"></div>
+
+<script src="data/mock-data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/request-form.js"></script>
+<script>initPage('request');</script>
+</body>
+</html>

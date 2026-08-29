@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Certificates — Up Skills Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="header"></div>
+<main>
+  <div class="page-head">
+    <div>
+      <h1>My Certificates</h1>
+      <p>Track your certificate requests, view, download and share your earned certificates.</p>
+    </div>
+    <a class="btn btn-primary" href="request-certificate.html">＋ New Request</a>
+  </div>
+
+  <div id="notificationArea"></div>
+
+  <section class="card">
+    <div class="card-body">
+      <h2>🎓 My Certificates</h2>
+      <div id="certsLoading" class="loading"><div class="spinner"></div>Loading your certificates…</div>
+      <div id="certsEmpty" class="empty-state" style="display:none">
+        <div class="icon">📜</div>
+        <p>No certificates yet. Submit a request and it will appear here once generated.</p>
+      </div>
+      <div id="certsList" class="table-wrap" style="display:none"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-body">
+      <h2>📨 My Certificate Requests</h2>
+      <div id="reqsLoading" class="loading"><div class="spinner"></div>Loading your requests…</div>
+      <div id="reqsEmpty" class="empty-state" style="display:none">
+        <div class="icon">📝</div>
+        <p>You have not submitted any certificate requests yet.</p>
+        <a class="btn btn-primary btn-sm" style="margin-top:12px" href="request-certificate.html">Request a Certificate</a>
+      </div>
+      <div id="reqsList" class="table-wrap" style="display:none"></div>
+    </div>
+  </section>
+</main>
+<div id="footer"></div>
+
+<script src="data/mock-data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/certificates.js"></script>
+<script>initPage('mine');</script>
+</body>
+</html>

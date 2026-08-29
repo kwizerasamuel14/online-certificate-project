@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Certificate Details — Up Skills Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;800&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<style>
+  .cert-preview {
+    background: linear-gradient(160deg, #fff, var(--primary-light));
+    border: 6px double var(--primary); border-radius: var(--radius);
+    padding: 40px 28px; text-align: center; position: relative;
+  }
+  .cert-preview .cert-logo { font-weight: 800; letter-spacing: 2px; color: var(--primary); }
+  .cert-preview .cert-script { font-family: 'Dancing Script', cursive; font-size: 2.2rem; color: var(--secondary); margin: 6px 0; }
+  .cert-preview .cert-name { font-size: 1.7rem; font-weight: 800; color: var(--dark); margin: 14px 0 4px; }
+  .cert-preview .qr { display: inline-block; background: #fff; padding: 8px; border: 1px solid var(--border); margin-top: 16px; }
+  .detail-row { display: grid; grid-template-columns: 170px 1fr; gap: 10px 14px; font-size: .95rem; }
+  .detail-row dt { font-weight: 700; color: var(--dark); }
+</style>
+</head>
+<body>
+<div id="header"></div>
+<main>
+  <div class="page-head">
+    <div>
+      <h1>Certificate Details</h1>
+      <p>Official certificate issued by Up Skills Hub.</p>
+    </div>
+    <a class="btn btn-ghost" href="my-certificates.html">← Back</a>
+  </div>
+
+  <div id="loading" class="loading"><div class="spinner"></div>Loading certificate…</div>
+  <div id="notFound" class="alert alert-danger" style="display:none">Certificate Not Found</div>
+
+  <div id="content" style="display:none">
+    <div class="card">
+      <div class="card-body">
+        <div class="cert-preview">
+          <div class="cert-logo">UP SKILLS HUB</div>
+          <div class="cert-script">Certificate of Completion</div>
+          <p style="color:var(--muted)">This is to certify that</p>
+          <div class="cert-name" id="c-name"></div>
+          <p>has successfully completed</p>
+          <h2 id="c-course" style="color:var(--primary)"></h2>
+          <p style="color:var(--muted);font-size:.88rem">
+            <span id="c-period"></span> · Issued on <span id="c-issue"></span>
+          </p>
+          <div class="qr" id="c-qr"></div>
+          <p style="margin-top:14px"><strong>Certificate ID: <span id="c-number"></span></strong></p>
+          <div id="c-status" style="margin-top:8px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <h2>Details</h2>
+        <dl class="detail-row">
+          <dt>Student Name</dt><dd id="d-name"></dd>
+          <dt>Course</dt><dd id="d-course"></dd>
+          <dt>Certificate Number</dt><dd id="d-number"></dd>
+          <dt>Issue Date</dt><dd id="d-issue"></dd>
+          <dt>Verification URL</dt><dd><a id="d-url" target="_blank" rel="noopener"></a></dd>
+          <dt>Status</dt><dd id="d-status"></dd>
+        </dl>
+        <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap">
+          <button class="btn btn-primary" id="btnDownload">⬇ Download PDF</button>
+          <button class="btn btn-secondary" id="btnShare">🔗 Share / Copy Link</button>
+          <a class="btn btn-outline" id="btnVerify" href="verify.html">✅ Verify Online</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<div id="footer"></div>
+
+<script src="data/mock-data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/details.js"></script>
+<script>initPage('mine');</script>
+</body>
+</html>

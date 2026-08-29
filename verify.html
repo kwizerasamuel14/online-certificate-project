@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify Certificate — Up Skills Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+</head>
+<body>
+<div id="header"></div>
+<main>
+  <div class="page-head">
+    <div>
+      <h1>Verify a Certificate</h1>
+      <p>Enter a certificate number or scan the QR code on the certificate to confirm its authenticity.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="field">
+        <label for="certNumber">Certificate Number</label>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <input type="text" id="certNumber" placeholder="e.g. USH-2026-FD-000001" style="flex:1;min-width:220px;text-transform:uppercase">
+          <button class="btn btn-primary" id="verifyBtn">✅ Verify</button>
+          <button class="btn btn-outline" id="scanBtn">📷 Scan QR Code</button>
+        </div>
+        <span class="hint">The certificate number is printed on the certificate, e.g. USH-2026-FD-000001</span>
+      </div>
+      <div id="qrReader" style="display:none;margin-top:16px"></div>
+    </div>
+  </div>
+
+  <div id="result"></div>
+</main>
+<div id="footer"></div>
+
+<script src="data/mock-data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/verify.js"></script>
+<script>initPage('verify');</script>
+</body>
+</html>
