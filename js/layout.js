@@ -53,7 +53,7 @@ function renderHeader(activePage) {
     <div class="header-inner">
       <a class="brand" href="index.html">
         <span class="logo-mark">USH</span>
-        <span>Up Skills Hub<span class="slogan">#LearnGrowSucceed</span></span>
+        <span>Up Skills Hub</span>
       </a>
       <nav class="main-nav">
         ${nav.map(n => `<a href="${n.href}" class="${activePage === n.id ? 'active' : ''}">${n.label}</a>`).join('')}
