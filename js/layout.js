@@ -12,42 +12,61 @@ function setCurrentUser(user) {
   localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
 }
 
-/* Demo switcher: lets you preview the module as a Trainee,
-   a Trainer or an Admin (real auth comes from the backend). */
-function renderAuthSwitcher() {
-  const user = getCurrentUser() || { role: 'trainee', name: 'Kwizera Samuel', email: 'kwizera.samuel@example.com' };
-  if (!localStorage.getItem(CURRENT_USER_KEY)) setCurrentUser(user);
-  const roles = [
-    { role: 'trainee', label: '🎓 Trainee' },
-    { role: 'trainer', label: '🧑‍🏫 Trainer' },
-    { role: 'admin',   label: '🛡️ Admin' },
-  ];
+const ROLE_LABELS = {
+  user:    '👤 User',
+  trainer: '🧑‍🏫 Trainer',
+  admin:   '🛡️ Admin',
+};
+
+function logout() {
+  localStorage.removeItem(CURRENT_USER_KEY);
+  location.href = 'login.html';
+}
+
+/* Logged-in user area: shows the role badge and a Logout button. */
+function renderAuthArea() {
+  const user = getCurrentUser();
+  if (!user) {
+    return `<a class="btn btn-sm btn-primary" href="login.html">Login</a>`;
+  }
   return `
-    <div class="auth-switch" title="Demo role switcher — replaced by real login in production">
-      ${roles.map(r => `
-        <button class="btn btn-sm ${user.role === r.role ? 'btn-primary' : 'btn-ghost'}"
-                onclick="switchRole('${r.role}')">${r.label}</button>`).join('')}
+    <div class="user-area">
+      <span class="user-role ${user.role === 'admin' ? 'role-admin' : user.role === 'trainer' ? 'role-trainer' : 'role-user'}"
+            title="Signed in as ${user.email}">${ROLE_LABELS[user.role] || user.role}</span>
+      <button class="btn btn-sm btn-ghost" onclick="logout()">Logout</button>
     </div>`;
 }
 
-function switchRole(role) {
-  const names = {
-    trainee: { name: 'Kwizera Samuel', email: 'kwizera.samuel@example.com' },
-    trainer: { name: 'Trainer Eric',   email: 'trainer.eric@upskillshub.com' },
-    admin:   { name: 'Administrator',  email: 'admin@upskillshub.com' },
-  };
-  setCurrentUser({ role, ...names[role] });
-  location.reload();
+/* Pages each role is allowed to open.
+   'user'   = trainee/intern  'trainer' & 'admin' = staff  (null = public) */
+const PAGE_ACCESS = {
+  home:    null,
+  verify:  null,
+  request: ['user', 'trainer', 'admin'],
+  mine:    ['user', 'trainer', 'admin'],
+  admin:   ['trainer', 'admin'],
+};
+
+function enforceAccess(activePage) {
+  const allowed = PAGE_ACCESS[activePage];
+  if (!allowed) return;                       // public page
+  const user = getCurrentUser();
+  if (!user || !allowed.includes(user.role)) {
+    setCurrentUser(null);
+    location.replace('login.html');
+  }
 }
 
 function renderHeader(activePage) {
+  const user = getCurrentUser();
+  const role = user ? user.role : null;
   const nav = [
     { id: 'home',       href: 'index.html',              label: 'Home' },
     { id: 'request',    href: 'request-certificate.html',label: 'Request Certificate' },
     { id: 'mine',       href: 'my-certificates.html',    label: 'My Certificates' },
-    { id: 'admin',      href: 'admin-certificates.html', label: 'Admin Management' },
+    { id: 'admin',      href: 'admin-certificates.html', label: 'Admin Management', staff: true },
     { id: 'verify',     href: 'verify.html',             label: 'Verify Certificate' },
-  ];
+  ].filter(n => !n.staff || role === 'trainer' || role === 'admin');
   return `
   <header class="site-header">
     <div class="header-inner">
@@ -58,7 +77,7 @@ function renderHeader(activePage) {
       <nav class="main-nav">
         ${nav.map(n => `<a href="${n.href}" class="${activePage === n.id ? 'active' : ''}">${n.label}</a>`).join('')}
       </nav>
-      ${renderAuthSwitcher()}
+      ${renderAuthArea()}
     </div>
   </header>`;
 }
@@ -82,6 +101,7 @@ function renderFooter() {
 }
 
 function initPage(activePage) {
+  if (activePage) enforceAccess(activePage);
   document.getElementById('header').innerHTML = renderHeader(activePage);
   document.getElementById('footer').innerHTML = renderFooter();
 }

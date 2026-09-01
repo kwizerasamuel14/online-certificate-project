@@ -188,6 +188,16 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
 }
 .site-footer a { color: #fff; }
 
+/* ---------- Header user area / role badge ---------- */
+.user-area { display: inline-flex; align-items: center; gap: 8px; }
+.user-role {
+  font-size: .8rem; font-weight: 700; padding: 5px 12px; border-radius: 999px;
+  background: var(--primary-light, #eef); color: var(--primary); white-space: nowrap;
+}
+.user-role.role-admin   { background: #fdecea; color: #b02a37; }
+.user-role.role-trainer { background: #e6f4f1; color: #33838d; }
+.user-role.role-user    { background: #eef0fb; color: var(--primary); }
+
 /* ---------- Modal ---------- */
 .modal-overlay {
   position: fixed; inset: 0; background: rgba(13, 27, 42, .55); z-index: 200;

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — Up Skills Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;800&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .login-wrap { max-width: 420px; margin: 48px auto; }
+  .login-wrap .script { font-family: 'Dancing Script', cursive; text-align: center; font-size: 1.6rem; color: var(--secondary); }
+  .login-wrap h1 { text-align: center; font-size: 1.5rem; margin-bottom: 4px; }
+  .login-wrap .sub { text-align: center; color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+  .login-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+  .login-tabs button { flex: 1; }
+  .login-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+  .login-note { text-align: center; color: var(--muted); font-size: .82rem; margin-top: 16px; }
+  .login-note a { color: var(--primary); }
+  /* hidden/shown dynamically by auth.js (inline style) */
+</style>
+</head>
+<body>
+<div id="header"></div>
+<main>
+  <div class="login-wrap card">
+    <div class="card-body">
+
+      <!-- ===== LOGIN FORM ===== -->
+      <div id="loginSection">
+        <div class="script">Welcome back</div>
+        <h1>Login to your account</h1>
+        <p class="sub">Sign in as a User, Trainer or Administrator.</p>
+
+        <div class="login-tabs" role="tablist">
+          <button class="btn btn-primary btn-sm" type="button" data-role="user"    onclick="selectRole('user')">👤 User</button>
+          <button class="btn btn-ghost  btn-sm" type="button" data-role="trainer" onclick="selectRole('trainer')">🧑‍🏫 Trainer</button>
+          <button class="btn btn-ghost  btn-sm" type="button" data-role="admin"   onclick="selectRole('admin')">🛡️ Admin</button>
+        </div>
+
+        <form id="loginForm" novalidate>
+          <div class="field" style="margin-bottom:14px">
+            <label for="loginEmail">Email address</label>
+            <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="username" required>
+          </div>
+          <div class="field" style="margin-bottom:6px">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" required>
+            <span class="error-msg" id="loginError">Incorrect email or password. Please try again.</span>
+          </div>
+          <button class="btn btn-primary" type="submit" id="loginBtn" style="width:100%;margin-top:16px">Login</button>
+        </form>
+
+        <p class="login-note">Just visiting? <a href="verify.html">Verify a certificate</a> — no account needed.</p>
+      </div>
+
+      <!-- ===== CHANGE PASSWORD FORM ===== -->
+      <div id="changeSection">
+        <div class="script">Account settings</div>
+        <h1>Change password</h1>
+        <p class="sub" id="changeWho"></p>
+
+        <form id="changeForm" novalidate>
+          <div class="field" style="margin-bottom:14px">
+            <label for="currentPassword">Current password</label>
+            <input type="password" id="currentPassword" autocomplete="current-password" required>
+          </div>
+          <div class="field" style="margin-bottom:14px">
+            <label for="newPassword">New password</label>
+            <input type="password" id="newPassword" autocomplete="new-password" required>
+            <span class="hint">At least 6 characters.</span>
+            <span class="error-msg" id="newPasswordErr">New password must be at least 6 characters.</span>
+          </div>
+          <div class="field" style="margin-bottom:6px">
+            <label for="confirmPassword">Confirm new password</label>
+            <input type="password" id="confirmPassword" autocomplete="new-password" required>
+            <span class="error-msg" id="confirmErr">Passwords do not match.</span>
+          </div>
+          <div class="login-actions">
+            <button class="btn btn-ghost" type="button" onclick="showLogin()">Back to login</button>
+            <button class="btn btn-primary" type="submit">Save new password</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</main>
+<div id="footer"></div>
+
+<script src="data/mock-data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/auth.js"></script>
+<script>initPage(null);</script>
+</body>
+</html>

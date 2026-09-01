@@ -5,7 +5,7 @@
    ===================================================== */
 
 const $ = id => document.getElementById(id);
-const user = getCurrentUser() || { role: 'trainee', name: 'Kwizera Samuel', email: 'kwizera.samuel@example.com' };
+const user = getCurrentUser() || { role: 'user', name: 'Guest', email: '' };
 
 async function load() {
   /* ---- notifications ---- */
