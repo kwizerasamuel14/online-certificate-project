@@ -51,9 +51,12 @@ function enforceAccess(activePage) {
   const allowed = PAGE_ACCESS[activePage];
   if (!allowed) return;                       // public page
   const user = getCurrentUser();
-  if (!user || !allowed.includes(user.role)) {
-    setCurrentUser(null);
+  if (!user) {
+    // Not logged in at all — go to login
     location.replace('login.html');
+  } else if (!allowed.includes(user.role)) {
+    // Logged in but not permitted — keep session, send home with a message
+    location.replace('index.html#access-denied');
   }
 }
 
@@ -102,6 +105,10 @@ function renderFooter() {
 
 function initPage(activePage) {
   if (activePage) enforceAccess(activePage);
+  if (location.hash === '#access-denied') {
+    history.replaceState(null, '', location.pathname);
+    setTimeout(() => toast('You do not have permission to view that page.', 'error'), 300);
+  }
   document.getElementById('header').innerHTML = renderHeader(activePage);
   document.getElementById('footer').innerHTML = renderFooter();
 }
