@@ -44,7 +44,7 @@ const PAGE_ACCESS = {
   verify:  null,
   request: ['user', 'trainer', 'admin'],
   mine:    ['user', 'trainer', 'admin'],
-  admin:   ['trainer', 'admin'],
+  admin:   ['admin'],
 };
 
 function enforceAccess(activePage) {
@@ -69,7 +69,7 @@ function renderHeader(activePage) {
     { id: 'mine',       href: 'my-certificates.html',    label: 'My Certificates' },
     { id: 'admin',      href: 'admin-certificates.html', label: 'Admin Management', staff: true },
     { id: 'verify',     href: 'verify.html',             label: 'Verify Certificate' },
-  ].filter(n => !n.staff || role === 'trainer' || role === 'admin');
+  ].filter(n => !n.staff || role === 'admin');
   return `
   <header class="site-header">
     <div class="header-inner">
