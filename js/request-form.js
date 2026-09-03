@@ -19,9 +19,6 @@ populateProgramSelect($('program'));
 if (user && user.name) {
   $('fullName').value = user.name;
 }
-if (user && user.email) {
-  $('email').value = user.email;
-}
 
 /* ---- Edit mode: only allowed while Pending Review ---- */
 if (editId) {
