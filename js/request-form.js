@@ -69,7 +69,7 @@ function validate() {
 
   ok = setInvalid('f-projectName', $('projectName').value.trim().length < 3) && ok;
   ok = setInvalid('f-projectDescription', $('projectDescription').value.trim().length < 20) && ok;
-  ok = setInvalid('f-accomplishments', $('accomplishments').value.trim().length < 20) && ok;
+  ok = setInvalid('f-accomplishments', $('accomplishments').value.trim().length < 300) && ok;
 
   ['workLink', 'liveLink', 'sourceLink'].forEach(id => {
     const v = $(id).value.trim();
