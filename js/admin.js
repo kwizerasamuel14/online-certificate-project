@@ -63,7 +63,7 @@ function render() {
               <strong>${r.id}</strong><br>
               ${c ? `<span style="font-size:.78rem;color:var(--primary)">${c.certificateNumber}</span>` : '—'}
             </td>
-            <td>${r.fullName}<br><span style="font-size:.78rem;color:var(--muted)">${r.traineeId}</span></td>
+            <td>${r.fullName}<br><span style="font-size:.78rem;color:var(--muted)">${r.email || ''}</span><br><span style="font-size:.78rem;color:var(--muted)">${r.traineeId}</span></td>
             <td style="max-width:220px">${r.program}</td>
             <td>${statusBadge(r.status)}</td>
             <td style="white-space:nowrap">

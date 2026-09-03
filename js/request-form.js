@@ -18,6 +18,9 @@ populateProgramSelect($('program'));
 if (user && user.name) {
   $('fullName').value = user.name;
 }
+if (user && user.email) {
+  $('fullNameEmailHint').textContent = 'Account email: ' + user.email;
+}
 
 /* ---- Edit mode: only allowed while Pending Review ---- */
 if (editId) {

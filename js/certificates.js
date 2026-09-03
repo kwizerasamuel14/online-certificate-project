@@ -87,7 +87,7 @@ async function load() {
 function viewReq(id) {
   API.getRequest(id).then(r => openModal('Certificate Request — ' + r.id, `
     <dl style="display:grid;grid-template-columns:150px 1fr;gap:8px 12px;font-size:.92rem">
-      <dt><strong>Name</strong></dt><dd>${r.fullName}</dd>
+      <dt><strong>Name</strong></dt><dd>${r.fullName} <span style="color:var(--muted)">(${r.email || ''})</span></dd>
       <dt><strong>Trainee ID</strong></dt><dd>${r.traineeId}</dd>
       <dt><strong>Program</strong></dt><dd>${r.program}</dd>
       <dt><strong>Period</strong></dt><dd>${formatDate(r.startDate)} → ${formatDate(r.endDate)}</dd>
