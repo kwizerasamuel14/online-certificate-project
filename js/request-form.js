@@ -4,6 +4,7 @@
    ===================================================== */
 
 const TRAINEE_ID_RE = /^USH-(TRA|INT)-\d{4}-\d{4,6}$/;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const URL_RE = /^https?:\/\/.+\..+/;
 const MAX_FILE_MB = 10;
 
@@ -19,7 +20,7 @@ if (user && user.name) {
   $('fullName').value = user.name;
 }
 if (user && user.email) {
-  $('fullNameEmailHint').textContent = 'Account email: ' + user.email;
+  $('email').value = user.email;
 }
 
 /* ---- Edit mode: only allowed while Pending Review ---- */
@@ -31,6 +32,7 @@ if (editId) {
       return;
     }
     $('fullName').value = r.fullName;
+    $('email').value = r.email || '';
     $('traineeId').value = r.traineeId;
     $('program').value = r.program;
     $('startDate').value = r.startDate;
@@ -63,6 +65,9 @@ function validate() {
   const tid = $('traineeId').value.trim().toUpperCase();
   $('traineeId').value = tid;
   ok = setInvalid('f-traineeId', !TRAINEE_ID_RE.test(tid)) && ok;
+
+  const em = $('email').value.trim();
+  ok = setInvalid('f-email', !EMAIL_RE.test(em)) && ok;
 
   ok = setInvalid('f-program', !$('program').value) && ok;
 
@@ -123,7 +128,7 @@ $('requestForm').addEventListener('submit', async e => {
   try {
     const data = {
       fullName: $('fullName').value.trim(),
-      email: (user && user.email) || $('fullName').value.trim().toLowerCase().replace(/\s+/g, '.') + '@example.com',
+      email: $('email').value.trim().toLowerCase(),
       traineeId: $('traineeId').value.trim().toUpperCase(),
       program: $('program').value,
       startDate: $('startDate').value,
