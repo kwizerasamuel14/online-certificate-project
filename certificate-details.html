@@ -5,21 +5,72 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Certificate Details — Up Skills Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;800&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;800&family=Dancing+Script:wght@600&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <style>
-  .cert-preview {
-    background: linear-gradient(160deg, #fff, var(--primary-light));
-    border: 6px double var(--primary); border-radius: var(--radius);
-    padding: 40px 28px; text-align: center; position: relative;
+  /* ===== Certificate — matches the official Up Skills Hub template ===== */
+  .cert-paper {
+    position: relative;
+    background: #faf6ea;
+    background-image: repeating-linear-gradient(45deg, rgba(190,170,120,.05) 0 2px, transparent 2px 6px);
+    border: 3px solid #1b2a4a;
+    outline: 1px solid #b3924f;
+    outline-offset: -9px;
+    padding: 44px 52px 30px;
+    color: #1b2a4a;
+    font-family: 'Playfair Display', Georgia, serif;
   }
-  .cert-preview .cert-logo { font-weight: 800; letter-spacing: 2px; color: var(--primary); }
-  .cert-preview .cert-script { font-family: 'Dancing Script', cursive; font-size: 2.2rem; color: var(--secondary); margin: 6px 0; }
-  .cert-preview .cert-name { font-size: 1.7rem; font-weight: 800; color: var(--dark); margin: 14px 0 4px; }
-  .cert-preview .qr { display: inline-block; background: #fff; padding: 8px; border: 1px solid var(--border); margin-top: 16px; }
+  /* gold ribbon corners */
+  .cert-paper::before, .cert-paper::after {
+    content: ''; position: absolute; width: 64px; height: 64px;
+    border: 10px solid transparent; pointer-events: none;
+  }
+  .cert-paper::before { top: 14px; left: 14px; border-top-color: #c9a85c; border-left-color: #c9a85c; border-radius: 6px 0 0 0; }
+  .cert-paper::after { bottom: 14px; right: 14px; border-bottom-color: #c9a85c; border-right-color: #c9a85c; border-radius: 0 0 6px 0; }
+
+  .cert-meta { display: flex; justify-content: space-between; font-family: Lato, sans-serif; font-size: .8rem; font-weight: 700; margin-bottom: 22px; }
+  .cert-meta span { background: rgba(27,42,74,.06); padding: 4px 10px; border-radius: 4px; }
+
+  .cert-title { font-size: clamp(1.7rem, 4.5vw, 2.6rem); font-weight: 800; text-align: center; margin: 4px 0 2px; }
+  .cert-orn { display: flex; align-items: center; gap: 12px; justify-content: center; margin: 8px auto 18px; max-width: 420px; color: #b3924f; }
+  .cert-orn::before, .cert-orn::after { content: ''; flex: 1; height: 2px; background: linear-gradient(90deg, transparent, #b3924f); }
+  .cert-orn::after { background: linear-gradient(90deg, #b3924f, transparent); }
+
+  .cert-awarded { text-align: center; font-family: Lato, sans-serif; font-size: .78rem; letter-spacing: 4px; font-weight: 700; color: #5a6478; margin-bottom: 10px; }
+  .cert-name { text-align: center; font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 800; letter-spacing: 1px; color: #1b2a4a; margin-bottom: 18px; }
+  .cert-body { text-align: center; font-size: .95rem; line-height: 1.7; max-width: 640px; margin: 0 auto 26px; color: #33405c; }
+  .cert-body strong { color: #1b2a4a; }
+
+  .cert-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 18px; align-items: end; margin-top: 10px; }
+  .cert-dates { font-family: Lato, sans-serif; font-size: .8rem; color: #33405c; }
+  .cert-dates b { display: block; color: #1b2a4a; font-size: .85rem; margin-top: 2px; }
+  .cert-sig { text-align: center; font-family: Lato, sans-serif; }
+  .cert-sig .sig-script { font-family: 'Dancing Script', cursive; font-size: 1.7rem; color: #1b2a4a; line-height: 1.1; }
+  .cert-sig .sig-line { border-top: 1.5px solid #1b2a4a; margin: 6px auto 4px; width: 190px; padding-top: 4px; font-size: .78rem; font-weight: 700; }
+  .cert-sig .sig-role { font-size: .72rem; letter-spacing: 1px; text-transform: uppercase; color: #5a6478; }
+
+  .cert-stamp {
+    width: 92px; height: 92px; border-radius: 50%;
+    border: 2px solid #1b2a4a; outline: 2px dashed #b3924f; outline-offset: -8px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: #1b2a4a; font-family: Lato, sans-serif; transform: rotate(-8deg);
+    background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.85), rgba(179,146,79,.18));
+    opacity: .9;
+  }
+  .cert-stamp b { font-size: 1.05rem; letter-spacing: 1px; }
+  .cert-stamp small { font-size: .5rem; letter-spacing: 2px; }
+
+  .cert-foot {
+    margin-top: 24px; padding-top: 10px; border-top: 1px solid rgba(27,42,74,.25);
+    text-align: center; font-family: Lato, sans-serif; font-size: .72rem; color: #5a6478;
+  }
+
+  .cert-extras { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-top: 16px; }
+  .cert-extras .qr { background: #fff; padding: 8px; border: 1px solid var(--border); }
   .detail-row { display: grid; grid-template-columns: 170px 1fr; gap: 10px 14px; font-size: .95rem; }
   .detail-row dt { font-weight: 700; color: var(--dark); }
+  @media print { body * { visibility: hidden; } .cert-paper, .cert-paper * { visibility: visible; } .cert-paper { position: absolute; inset: 0; } }
 </style>
 </head>
 <body>
@@ -39,19 +90,58 @@
   <div id="content" style="display:none">
     <div class="card">
       <div class="card-body">
-        <div class="cert-preview">
-          <div class="cert-logo">UP SKILLS HUB</div>
-          <div class="cert-script">Certificate of Completion</div>
-          <p style="color:var(--muted)">This is to certify that</p>
+        <div class="cert-paper">
+          <div class="cert-meta">
+            <span>Certificate ID: <span id="c-number"></span></span>
+            <span>Issue Date: <span id="c-issue"></span></span>
+          </div>
+
+          <h1 class="cert-title">Certificate of Completion</h1>
+          <div class="cert-orn">❖</div>
+
+          <div class="cert-awarded">THIS CERTIFICATE IS AWARDED TO</div>
           <div class="cert-name" id="c-name"></div>
-          <p>has successfully completed</p>
-          <h2 id="c-course" style="color:var(--primary)"></h2>
-          <p style="color:var(--muted);font-size:.88rem">
-            <span id="c-period"></span> · Issued on <span id="c-issue"></span>
+
+          <p class="cert-body">
+            for successfully completing the internship program
+            <strong>“<span id="c-course"></span>”</strong> offered by <strong>Up Skills Hub</strong>.
+            Throughout the program, the trainee demonstrated dedication, professionalism
+            and outstanding growth in practical skills.
           </p>
+
+          <div class="cert-row">
+            <div style="display:flex;flex-direction:column;justify-content:space-between;gap:16px">
+              <div class="cert-sig">
+                <div class="sig-script">Clarisse Uwizeyimana</div>
+                <div class="sig-line">Clarisse Uwizeyimana</div>
+                <div class="sig-role">Founder &amp; CEO — Signature</div>
+              </div>
+              <div class="cert-dates">
+                Start Date:<b id="c-start"></b>
+                End Date:<b id="c-end"></b>
+              </div>
+            </div>
+            <div class="cert-stamp"><b>USH</b><small>UP SKILLS HUB</small></div>
+            <div style="display:flex;align-items:flex-end">
+              <div class="cert-sig">
+                <div class="sig-script">Christophe Nshimiyimana</div>
+                <div class="sig-line">Christophe Nshimiyimana</div>
+                <div class="sig-role">Program Manager — Signature</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cert-foot">
+            KG 173 Street, Remera, Kigali, Rwanda &nbsp;·&nbsp; upskillshub.info@gmail.com &nbsp;·&nbsp; +250 781 796 283
+          </div>
+        </div>
+
+        <div class="cert-extras">
           <div class="qr" id="c-qr"></div>
-          <p style="margin-top:14px"><strong>Certificate ID: <span id="c-number"></span></strong></p>
-          <div id="c-status" style="margin-top:8px"></div>
+          <div>
+            <div id="c-status"></div>
+            <span class="hint">Scan the QR code or use the Verify Online button to confirm authenticity.</span>
+          </div>
         </div>
       </div>
     </div>

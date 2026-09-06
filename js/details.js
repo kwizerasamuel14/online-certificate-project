@@ -18,7 +18,8 @@ const certId = params.get('id');
     set('c-course', c.course);      set('d-course', c.course);
     set('c-number', c.certificateNumber); set('d-number', c.certificateNumber);
     set('c-issue', formatDate(c.issueDate)); set('d-issue', formatDate(c.issueDate));
-    set('c-period', `${formatDate(c.startDate)} — ${formatDate(c.endDate)}`);
+    set('c-start', formatDate(c.startDate));
+    set('c-end', formatDate(c.endDate));
 
     const url = document.getElementById('d-url');
     url.href = c.verifyUrl; url.textContent = c.verifyUrl;
