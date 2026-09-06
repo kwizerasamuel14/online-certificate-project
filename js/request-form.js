@@ -15,8 +15,9 @@ const editId = new URLSearchParams(location.search).get('edit');
 /* populate program dropdown (grouped optgroups) */
 populateProgramSelect($('program'));
 
-/* prefill from the current demo user */
-if (user && user.name) {
+/* prefill from the current demo user (trainee/intern accounts only —
+   staff accounts are named "Trainer"/"Admin" and must not leak into the field) */
+if (user && user.role === 'user' && user.name) {
   $('fullName').value = user.name;
 }
 
