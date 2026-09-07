@@ -115,7 +115,11 @@ async function cancelReq(id) {
 
 async function downloadCert(id) {
   toast('Preparing PDF download…');
-  try { await API.generateCertificate(id); toast('Certificate PDF downloaded.'); }
+  try {
+    const c = await API.getCertificate(id);
+    await downloadCertificatePDF(c);
+    toast('Certificate PDF downloaded.');
+  }
   catch (e) { toast(e.message, 'error'); }
 }
 

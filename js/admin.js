@@ -108,7 +108,13 @@ async function approveGenerate(id) {
 }
 
 async function regenerate(id) {
-  try { await API.generateCertificate(id); toast('Certificate PDF regenerated.'); load(); }
+  try {
+    await API.generateCertificate(id);           // refresh status + issue data
+    const cert = await API.getCertificate(id);   // fetch full record
+    await downloadCertificatePDF(cert);          // real PDF -> browser download
+    toast('Certificate PDF regenerated & downloaded.');
+    load();
+  }
   catch (e) { toast(e.message, 'error'); }
 }
 

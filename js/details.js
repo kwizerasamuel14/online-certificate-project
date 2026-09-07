@@ -35,7 +35,8 @@ const certId = params.get('id');
 
     document.getElementById('btnDownload').onclick = async () => {
       try {
-        await API.generateCertificate(c.id);
+        toast('Preparing PDF download…');
+        await downloadCertificatePDF(c);
         toast('Certificate PDF downloaded.');
       } catch (e) { toast(e.message, 'error'); }
     };
