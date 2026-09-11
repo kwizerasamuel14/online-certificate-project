@@ -26,7 +26,10 @@ function logout() {
 /* Logged-in user area: shows the role badge and a Logout button. */
 function renderAuthArea() {
   const user = getCurrentUser();
-  if (!user) return ''; // no Login option for regular users/visitors
+  if (!user) {
+    /* no public user login — only a discreet entry point for staff */
+    return `<a class="btn btn-sm btn-ghost staff-login-link" href="login.html" title="Trainer / Admin sign-in">Staff Login</a>`;
+  }
   return `
     <div class="user-area">
       <span class="user-role ${user.role === 'admin' ? 'role-admin' : user.role === 'trainer' ? 'role-trainer' : 'role-user'}"

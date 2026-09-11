@@ -4,20 +4,13 @@
    demo auth; replaced by the real backend later).
    ===================================================== */
 
-let selectedRole = 'user';
+let selectedRole = 'trainer';
 
 /* Default accounts (as provided by the supervisor).
+   Only Trainer and Admin can log in — public users no longer have accounts.
    Passwords can be changed from this page and the change
    is persisted in localStorage. */
 const DEFAULT_ACCOUNTS = {
-  user: {
-    email: 'user@upskillshub.com',
-    password: 'User1',
-    name: 'Kwizera Samuel',
-    displayName: 'User / Trainee',
-    redirect: 'index.html',
-    canChangePassword: false,
-  },
   trainer: {
     email: 'upskillshub.info@gmail.com',
     password: 'Trainer1',
