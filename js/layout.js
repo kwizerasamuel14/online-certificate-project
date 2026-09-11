@@ -28,7 +28,7 @@ function renderAuthArea() {
   const user = getCurrentUser();
   if (!user) {
     /* no public user login — only a discreet entry point for staff */
-    return `<a class="btn btn-sm btn-ghost staff-login-link" href="login.html" title="Trainer / Admin sign-in">Staff Login</a>`;
+    return `<a class="btn btn-sm btn-ghost staff-login-link" href="login.html" title="Trainer / Admin sign-in">Login</a>`;
   }
   return `
     <div class="user-area">
