@@ -39,12 +39,12 @@
       <h3>Request a Certificate</h3>
       <p>Completed your training or internship? Submit your certificate request with your details and documents.</p>
     </a>
-    <a class="tile card" href="my-certificates.html">
+    <a class="tile card" id="tileMine" href="my-certificates.html">
       <div class="icon">🎓</div>
       <h3>My Certificates</h3>
       <p>Track your request status, view, download and share your earned certificates.</p>
     </a>
-    <a class="tile card" href="admin-certificates.html">
+    <a class="tile card" id="tileAdmin" href="admin-certificates.html">
       <div class="icon">🛡️</div>
       <h3>Admin Management</h3>
       <p>For trainers & administrators: review, recommend, approve, generate, revoke and email certificates.</p>
@@ -72,6 +72,13 @@
 <script src="data/mock-data.js"></script>
 <script src="js/api.js"></script>
 <script src="js/layout.js"></script>
-<script>initPage('home');</script>
+<script>initPage('home');
+/* hide staff/guest-only tiles for the public */
+(function () {
+  const u = getCurrentUser();
+  if (!u) document.getElementById('tileMine').style.display = 'none';
+  if (!u || u.role !== 'admin') document.getElementById('tileAdmin').style.display = 'none';
+})();
+</script>
 </body>
 </html>

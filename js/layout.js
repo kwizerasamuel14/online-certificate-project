@@ -20,15 +20,13 @@ const ROLE_LABELS = {
 
 function logout() {
   localStorage.removeItem(CURRENT_USER_KEY);
-  location.href = 'login.html';
+  location.href = 'index.html';
 }
 
 /* Logged-in user area: shows the role badge and a Logout button. */
 function renderAuthArea() {
   const user = getCurrentUser();
-  if (!user) {
-    return `<a class="btn btn-sm btn-primary" href="login.html">Login</a>`;
-  }
+  if (!user) return ''; // no Login option for regular users/visitors
   return `
     <div class="user-area">
       <span class="user-role ${user.role === 'admin' ? 'role-admin' : user.role === 'trainer' ? 'role-trainer' : 'role-user'}"
@@ -42,7 +40,8 @@ function renderAuthArea() {
 const PAGE_ACCESS = {
   home:    null,
   verify:  null,
-  request: ['user', 'trainer', 'admin'],
+  request: null,   // public — no login required to request a certificate
+  details: null,   // public — certificate details reached via Verify
   mine:    ['user', 'trainer', 'admin'],
   admin:   ['admin'],
 };
@@ -66,10 +65,10 @@ function renderHeader(activePage) {
   const nav = [
     { id: 'home',       href: 'index.html',              label: 'Home' },
     { id: 'request',    href: 'request-certificate.html',label: 'Request Certificate' },
-    { id: 'mine',       href: 'my-certificates.html',    label: 'My Certificates' },
+    { id: 'mine',       href: 'my-certificates.html',    label: 'My Certificates', auth: true },
     { id: 'admin',      href: 'admin-certificates.html', label: 'Admin Management', staff: true },
     { id: 'verify',     href: 'verify.html',             label: 'Verify Certificate' },
-  ].filter(n => !n.staff || role === 'admin');
+  ].filter(n => (!n.staff || role === 'admin') && (!n.auth || user));
   return `
   <header class="site-header">
     <div class="header-inner">

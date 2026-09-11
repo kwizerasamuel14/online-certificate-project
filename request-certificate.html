@@ -170,7 +170,7 @@
       <p><strong>Request ID: <span id="successReqId"></span></strong></p>
       <p style="margin-top:8px">Certificate Request Status: <span class="badge badge-pending">Pending Review</span></p>
       <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-        <a class="btn btn-primary" href="my-certificates.html">View My Requests</a>
+        <a class="btn btn-primary" id="successViewLink" href="my-certificates.html">View My Requests</a>
         <a class="btn btn-ghost" href="index.html">Back to Home</a>
       </div>
     </div>
@@ -182,6 +182,13 @@
 <script src="js/api.js"></script>
 <script src="js/layout.js"></script>
 <script src="js/request-form.js"></script>
-<script>initPage('request');</script>
+<script>initPage('request');
+/* guests have no account — don't offer the gated My Requests page */
+if (!getCurrentUser()) {
+  const l = document.getElementById('successViewLink');
+  l.textContent = 'Save your Request ID';
+  l.href = 'index.html';
+}
+</script>
 </body>
 </html>
