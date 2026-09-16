@@ -20,6 +20,32 @@ async function downloadCertificatePDF(c) {
 
   const NAVY = '#1b2a4a', GOLD = '#b3924f', PALE = '#faf6ea', GREY = '#5a6478';
 
+  // load the logo, circularly clipped onto a transparent PNG so it sits
+  // inside the round stamp like the official template's seal
+  async function loadCircularLogo() {
+    try {
+      const img = await new Promise((resolve, reject) => {
+        const im = new Image();
+        im.onload = () => resolve(im);
+        im.onerror = reject;
+        im.src = 'Logo%20Image.jpeg';
+      });
+      const size = 300, canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.clip();
+      // cover-fit the square source into the circle
+      ctx.drawImage(img, 0, 0, size, size);
+      ctx.restore();
+      return canvas.toDataURL('image/png');
+    } catch (e) { return null; }
+  }
+  const logoDataUrl = await loadCircularLogo();
+
   // parchment background
   doc.setFillColor(PALE);
   doc.rect(0, 0, W, H, 'F');
@@ -104,15 +130,21 @@ async function downloadCertificatePDF(c) {
   doc.setFontSize(6.5);
   doc.text('Program Manager Signature', W - 60, rowY + 12, { align: 'center' });
 
-  // centre stamp (circular)
+  // centre stamp — circular, with the official logo inside
   doc.setDrawColor(NAVY); doc.setLineWidth(0.6);
   doc.circle(cx, rowY, 11, 'S');
-  doc.setDrawColor(GOLD); doc.setLineWidth(0.3);
-  doc.circle(cx, rowY, 9.2, 'S');
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(NAVY);
-  doc.text('USH', cx, rowY + 1, { align: 'center' });
-  doc.setFontSize(4.5);
-  doc.text('UP SKILLS HUB', cx, rowY + 5, { align: 'center' });
+  if (logoDataUrl) {
+    try { doc.addImage(logoDataUrl, 'PNG', cx - 10, rowY - 10, 20, 20); }
+    catch (e) { /* fall through to text stamp */ }
+  }
+  if (!logoDataUrl) {
+    doc.setDrawColor(GOLD); doc.setLineWidth(0.3);
+    doc.circle(cx, rowY, 9.2, 'S');
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(NAVY);
+    doc.text('USH', cx, rowY + 1, { align: 'center' });
+    doc.setFontSize(4.5);
+    doc.text('UP SKILLS HUB', cx, rowY + 5, { align: 'center' });
+  }
 
   // footer (matches official template contact info)
   doc.setDrawColor(NAVY); doc.setLineWidth(0.2);
