@@ -20,22 +20,6 @@ async function downloadCertificatePDF(c) {
 
   const NAVY = '#1b2a4a', GOLD = '#b3924f', PALE = '#faf6ea', GREY = '#5a6478';
 
-  // load the official logo as a data URL so it can be embedded in the PDF
-  async function loadLogoDataUrl() {
-    try {
-      const res = await fetch('Logo%20Image.jpeg');
-      if (!res.ok) throw new Error('logo fetch failed');
-      const blob = await res.blob();
-      return await new Promise((resolve, reject) => {
-        const r = new FileReader();
-        r.onload = () => resolve(r.result);
-        r.onerror = reject;
-        r.readAsDataURL(blob);
-      });
-    } catch (e) { return null; }
-  }
-  const logoDataUrl = await loadLogoDataUrl();
-
   // parchment background
   doc.setFillColor(PALE);
   doc.rect(0, 0, W, H, 'F');
@@ -109,24 +93,15 @@ async function downloadCertificatePDF(c) {
   doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(GREY);
   doc.text('PROGRAM MANAGER — SIGNATURE', W - 60, rowY + 8, { align: 'center' });
 
-  // centre stamp — official logo image (circular)
+  // centre stamp (circular)
   doc.setDrawColor(NAVY); doc.setLineWidth(0.6);
   doc.circle(cx, rowY, 11, 'S');
   doc.setDrawColor(GOLD); doc.setLineWidth(0.3);
   doc.circle(cx, rowY, 9.2, 'S');
-  if (logoDataUrl) {
-    try {
-      doc.addImage(logoDataUrl, 'JPEG', cx - 9, rowY - 9, 18, 18);
-    } catch (e) {
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(NAVY);
-      doc.text('USH', cx, rowY + 1, { align: 'center' });
-    }
-  } else {
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(NAVY);
-    doc.text('USH', cx, rowY + 1, { align: 'center' });
-    doc.setFontSize(4.5);
-    doc.text('UP SKILLS HUB', cx, rowY + 5, { align: 'center' });
-  }
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(NAVY);
+  doc.text('USH', cx, rowY + 1, { align: 'center' });
+  doc.setFontSize(4.5);
+  doc.text('UP SKILLS HUB', cx, rowY + 5, { align: 'center' });
 
   // dates under left signature block
   doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor('#33405c');
