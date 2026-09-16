@@ -76,7 +76,7 @@ function renderHeader(activePage) {
   <header class="site-header">
     <div class="header-inner">
       <a class="brand" href="index.html">
-        <span class="logo-mark">USH</span>
+        <img class="logo-mark" src="Logo%20Image.jpeg" alt="Up Skills Hub logo">
         <span>Up Skills Hub</span>
       </a>
       <nav class="main-nav">

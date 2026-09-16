@@ -63,10 +63,8 @@ a:hover { text-decoration: underline; }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.15rem; color: var(--dark); }
 .brand:hover { text-decoration: none; }
 .brand .logo-mark {
-  width: 38px; height: 38px; border-radius: 8px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: #fff; display: flex; align-items: center; justify-content: center;
-  font-size: .8rem; font-weight: 800; letter-spacing: .5px;
+  width: 38px; height: 38px; border-radius: 50%;
+  object-fit: cover; display: block;
 }
 .brand .slogan { display: block; font-size: .68rem; font-weight: 400; color: var(--secondary); letter-spacing: 1px; }
 

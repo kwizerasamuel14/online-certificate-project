@@ -54,13 +54,13 @@
   .cert-stamp {
     width: 92px; height: 92px; border-radius: 50%;
     border: 2px solid #1b2a4a; outline: 2px dashed #b3924f; outline-offset: -8px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    color: #1b2a4a; font-family: Lato, sans-serif; transform: rotate(-8deg);
+    display: flex; align-items: center; justify-content: center;
+    transform: rotate(-8deg);
     background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.85), rgba(179,146,79,.18));
     opacity: .9;
+    overflow: hidden;
   }
-  .cert-stamp b { font-size: 1.05rem; letter-spacing: 1px; }
-  .cert-stamp small { font-size: .5rem; letter-spacing: 2px; }
+  .cert-stamp img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
   .cert-foot {
     margin-top: 24px; padding-top: 10px; border-top: 1px solid rgba(27,42,74,.25);
@@ -122,7 +122,7 @@
                 End Date:<b id="c-end"></b>
               </div>
             </div>
-            <div class="cert-stamp"><b>USH</b><small>UP SKILLS HUB</small></div>
+            <div class="cert-stamp"><img src="Logo%20Image.jpeg" alt="Up Skills Hub logo"></div>
             <div style="display:flex;align-items:flex-end">
               <div class="cert-sig">
                 <div class="sig-script">Christophe Nshimiyimana</div>
