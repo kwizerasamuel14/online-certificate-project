@@ -50,6 +50,9 @@
   .cert-sig .sig-script { font-family: 'Dancing Script', cursive; font-size: 1.7rem; color: #1b2a4a; line-height: 1.1; }
   .cert-sig .sig-line { border-top: 1.5px solid #1b2a4a; margin: 6px auto 4px; width: 190px; padding-top: 4px; font-size: .78rem; font-weight: 700; }
   .cert-sig .sig-role { font-size: .72rem; letter-spacing: 1px; text-transform: uppercase; color: #5a6478; }
+  .cert-sig .sig-sub { font-size: .62rem; color: #5a6478; margin-top: 2px; }
+  .cert-dates-side { text-align: left; font-family: Lato, sans-serif; font-size: .85rem; color: #1b2a4a; margin: 10px 0 4px; display: flex; gap: 40px; justify-content: flex-start; padding-left: 4px; }
+  .cert-dates-side b { font-weight: 700; }
 
   .cert-stamp {
     width: 92px; height: 92px; border-radius: 50%;
@@ -104,22 +107,24 @@
           <div class="cert-name" id="c-name"></div>
 
           <p class="cert-body">
-            for successfully completing the internship program
-            <strong>“<span id="c-course"></span>”</strong> offered by <strong>Up Skills Hub</strong>.
-            Throughout the program, the trainee demonstrated dedication, professionalism
-            and outstanding growth in practical skills.
+            For successfully completing the <strong><span id="c-course"></span></strong> at Up
+            Skills Hub. The recipient has successfully fulfilled all program requirements,
+            including practical training, project-based learning, assessments, and competency
+            evaluations, demonstrating the knowledge, technical skills, and professional
+            standards expected of the program.
           </p>
+
+          <div class="cert-dates-side">
+            <div><b>Start Date:</b> <span id="c-start"></span></div>
+            <div><b>End Date:</b> <span id="c-end"></span></div>
+          </div>
 
           <div class="cert-row">
             <div style="display:flex;flex-direction:column;justify-content:space-between;gap:16px">
               <div class="cert-sig">
                 <div class="sig-script">Clarisse Uwizeyimana</div>
                 <div class="sig-line">Clarisse Uwizeyimana</div>
-                <div class="sig-role">Founder &amp; CEO — Signature</div>
-              </div>
-              <div class="cert-dates">
-                Start Date:<b id="c-start"></b>
-                End Date:<b id="c-end"></b>
+                <div class="sig-role">Founder &amp; CEO</div>
               </div>
             </div>
             <div class="cert-stamp"><b>USH</b><small>UP SKILLS HUB</small></div>
@@ -127,13 +132,15 @@
               <div class="cert-sig">
                 <div class="sig-script">Christophe Nshimiyimana</div>
                 <div class="sig-line">Christophe Nshimiyimana</div>
-                <div class="sig-role">Program Manager — Signature</div>
+                <div class="sig-role">Program Director</div>
+                <div class="sig-sub">Program Manager Signature</div>
               </div>
             </div>
           </div>
 
           <div class="cert-foot">
-            KG 173 Street, Remera, Kigali, Rwanda &nbsp;·&nbsp; upskillshub.info@gmail.com &nbsp;·&nbsp; +250 781 796 283
+            Up Skills Hub, Remera, Kigali, Rwanda<br>
+            www.upskillshub.com · info@upskillshub.com · +250 781 796 283
           </div>
         </div>
 

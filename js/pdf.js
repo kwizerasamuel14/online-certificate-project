@@ -59,16 +59,25 @@ async function downloadCertificatePDF(c) {
   doc.setFont('times', 'bold'); doc.setFontSize(30); doc.setTextColor(NAVY);
   doc.text(c.studentName, cx, 88, { align: 'center' });
 
-  // body paragraph
-  doc.setFont('times', 'normal'); doc.setFontSize(12); doc.setTextColor('#33405c');
-  doc.text(
-    'for successfully completing the internship program',
-    cx, 103, { align: 'center' });
-  doc.setFont('times', 'bold');
-  doc.text('"' + c.course + '"', cx, 111, { align: 'center' });
-  doc.setFont('times', 'normal');
-  doc.text('offered by Up Skills Hub. Throughout the program, the trainee demonstrated', cx, 120, { align: 'center' });
-  doc.text('dedication, professionalism and outstanding growth in practical skills.', cx, 127, { align: 'center' });
+  // body paragraph (matches official template wording)
+  doc.setFont('times', 'normal'); doc.setFontSize(11); doc.setTextColor('#33405c');
+  const bodyLines = [
+    'For successfully completing the ' + c.course + ' at Up Skills Hub. The recipient has',
+    'successfully fulfilled all program requirements, including practical training,',
+    'project-based learning, assessments, and competency evaluations, demonstrating',
+    'the knowledge, technical skills, and professional standards expected of the program.',
+  ];
+  bodyLines.forEach((line, i) => doc.text(line, cx, 102 + i * 7, { align: 'center' }));
+
+  // start / end dates — left, beside the body (per official template)
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(NAVY);
+  doc.text('Start Date:', 20, 118);
+  doc.setFont('helvetica', 'normal'); doc.setTextColor('#33405c');
+  doc.text(formatDate(c.startDate), 42, 118);
+  doc.setFont('helvetica', 'bold'); doc.setTextColor(NAVY);
+  doc.text('End Date:', 20, 124);
+  doc.setFont('helvetica', 'normal'); doc.setTextColor('#33405c');
+  doc.text(formatDate(c.endDate), 42, 124);
 
   // ---- signatures row ----
   const rowY = 165;
@@ -82,7 +91,7 @@ async function downloadCertificatePDF(c) {
   doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
   doc.text('Clarisse Uwizeyimana', 60, rowY + 4, { align: 'center' });
   doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(GREY);
-  doc.text('FOUNDER & CEO — SIGNATURE', 60, rowY + 8, { align: 'center' });
+  doc.text('FOUNDER & CEO', 60, rowY + 8, { align: 'center' });
 
   // right signature
   doc.setFont('times', 'italic'); doc.setFontSize(16); doc.setTextColor(NAVY);
@@ -91,7 +100,9 @@ async function downloadCertificatePDF(c) {
   doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
   doc.text('Christophe Nshimiyimana', W - 60, rowY + 4, { align: 'center' });
   doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(GREY);
-  doc.text('PROGRAM MANAGER — SIGNATURE', W - 60, rowY + 8, { align: 'center' });
+  doc.text('PROGRAM DIRECTOR', W - 60, rowY + 8, { align: 'center' });
+  doc.setFontSize(6.5);
+  doc.text('Program Manager Signature', W - 60, rowY + 12, { align: 'center' });
 
   // centre stamp (circular)
   doc.setDrawColor(NAVY); doc.setLineWidth(0.6);
@@ -103,27 +114,18 @@ async function downloadCertificatePDF(c) {
   doc.setFontSize(4.5);
   doc.text('UP SKILLS HUB', cx, rowY + 5, { align: 'center' });
 
-  // dates under left signature block
-  doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor('#33405c');
-  doc.text('Start Date:', 30, rowY + 16); doc.setTextColor(NAVY);
-  doc.setFont('helvetica', 'bold');
-  doc.text(formatDate(c.startDate), 62, rowY + 16);
-  doc.setFont('helvetica', 'normal'); doc.setTextColor('#33405c');
-  doc.text('End Date:', 30, rowY + 21); doc.setTextColor(NAVY);
-  doc.setFont('helvetica', 'bold');
-  doc.text(formatDate(c.endDate), 62, rowY + 21);
+  // footer (matches official template contact info)
+  doc.setDrawColor(NAVY); doc.setLineWidth(0.2);
+  doc.line(cx - 90, H - 24, cx + 90, H - 24);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(GREY);
+  doc.text('Up Skills Hub, Remera, Kigali, Rwanda', cx, H - 19, { align: 'center' });
+  doc.text('www.upskillshub.com  ·  info@upskillshub.com  ·  +250 781 796 283', cx, H - 14, { align: 'center' });
 
   // QR code (verification URL) bottom-right
   try {
     const qrDataUrl = await makeQrDataUrl(c.verifyUrl || ('https://upskillshub.com/verify/' + c.certificateNumber));
     if (qrDataUrl) doc.addImage(qrDataUrl, 'PNG', W - 40, H - 38, 22, 22);
   } catch (_) { /* QR optional — never block the download */ }
-
-  // footer
-  doc.setDrawColor(NAVY); doc.setLineWidth(0.2);
-  doc.line(cx - 90, H - 24, cx + 90, H - 24);
-  doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(GREY);
-  doc.text('KG 173 Street, Remera, Kigali, Rwanda  ·  upskillshub.info@gmail.com  ·  +250 781 796 283', cx, H - 18, { align: 'center' });
 
   // download
   const safeName = String(c.studentName).replace(/[^a-z0-9]+/gi, '-').toLowerCase();
