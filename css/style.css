@@ -68,14 +68,6 @@ a:hover { text-decoration: underline; }
 }
 .brand .slogan { display: block; font-size: .68rem; font-weight: 400; color: var(--secondary); letter-spacing: 1px; }
 
-/* staff comments thread on request details */
-.comment {
-  background: var(--bg, #f7f8fa); border: 1px solid var(--border); border-radius: 8px;
-  padding: 10px 12px; font-size: .9rem;
-}
-.comment + .comment { margin-top: 2px; }
-#commentBox { resize: vertical; min-height: 60px; }
-
 .main-nav { display: flex; gap: 4px; flex-wrap: wrap; }
 .main-nav a {
   padding: 8px 14px; border-radius: 6px; color: var(--text); font-weight: 600; font-size: .92rem;

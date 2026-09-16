@@ -127,36 +127,6 @@ const API = {
 
   /* ---- Trainer / Admin workflow ---- */
 
-  /** GET — comments/notes on a request (trainer + admin discussion) */
-  async getRequestComments(requestId) {
-    await delay(200);
-    const db = store();
-    return [...(db.comments || [])].filter(c => c.requestId === requestId)
-      .sort((a, b) => new Date(a.at) - new Date(b.at));
-  },
-
-  /** POST — trainer or admin adds a comment/note to a request */
-  async addRequestComment(requestId, text) {
-    await delay(200);
-    if (!text || !text.trim()) throw new Error('Comment cannot be empty.');
-    const user = getCurrentUser();
-    if (!user || (user.role !== 'trainer' && user.role !== 'admin'))
-      throw new Error('Only staff can comment on requests.');
-    const db = store();
-    if (!db.comments) db.comments = [];
-    const comment = {
-      id: 'CMT-' + Date.now(),
-      requestId,
-      author: user.name || user.email,
-      role: user.role,
-      text: text.trim(),
-      at: new Date().toISOString(),
-    };
-    db.comments.push(comment);
-    save(db);
-    return comment;
-  },
-
   /** POST — trainer recommends a pending request */
   async recommendRequest(id) {
     await delay();
