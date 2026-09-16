@@ -46,7 +46,7 @@ const PAGE_ACCESS = {
   request: null,   // public — no login required to request a certificate
   details: null,   // public — certificate details reached via Verify
   mine:    ['user', 'trainer', 'admin'],
-  admin:   ['admin'],
+  admin:   ['trainer', 'admin'],   // trainers see & comment on all requests; admin has full powers
 };
 
 function enforceAccess(activePage) {
@@ -69,9 +69,9 @@ function renderHeader(activePage) {
     { id: 'home',       href: 'index.html',              label: 'Home' },
     { id: 'request',    href: 'request-certificate.html',label: 'Request Certificate' },
     { id: 'mine',       href: 'my-certificates.html',    label: 'My Certificates', auth: true },
-    { id: 'admin',      href: 'admin-certificates.html', label: 'Admin Management', staff: true },
+    { id: 'admin',      href: 'admin-certificates.html', label: 'Management', staff: true },
     { id: 'verify',     href: 'verify.html',             label: 'Verify Certificate' },
-  ].filter(n => (!n.staff || role === 'admin') && (!n.auth || user));
+  ].filter(n => (!n.staff || role === 'admin' || role === 'trainer') && (!n.auth || user));
   return `
   <header class="site-header">
     <div class="header-inner">

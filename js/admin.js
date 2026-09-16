@@ -7,6 +7,7 @@
 
 const $ = id => document.getElementById(id);
 let records = [];
+let isAdmin = (getCurrentUser() || {}).role === 'admin';
 
 async function load() {
   $('listLoading').style.display = 'block';
@@ -49,9 +50,9 @@ function render() {
         actions.push(`<button class="btn btn-sm btn-outline" onclick="viewReq('${r.id}')">View</button>`);
         if (r.status === 'pending')
           actions.push(`<button class="btn btn-sm btn-secondary" onclick="recommend('${r.id}')">✔ Recommend</button>`);
-        if (r.status === 'recommended')
+        if (isAdmin && r.status === 'recommended')
           actions.push(`<button class="btn btn-sm btn-primary" onclick="approveGenerate('${r.id}')">🎓 Approve & Generate</button>`);
-        if (c && (c.status === 'generated' || c.status === 'approved')) {
+        if (isAdmin && c && (c.status === 'generated' || c.status === 'approved')) {
           actions.push(`<button class="btn btn-sm btn-secondary" onclick="regenerate('${c.id}')">🔄 Generate PDF</button>`);
           actions.push(`<button class="btn btn-sm btn-ghost" onclick="emailCert('${c.id}')">✉ Email</button>`);
           actions.push(`<button class="btn btn-sm btn-danger" onclick="openRevoke('${c.id}')">🚫 Revoke</button>`);
@@ -91,7 +92,49 @@ function viewReq(id) {
       ${r.liveLink ? `<dt><strong>Live link</strong></dt><dd><a href="${r.liveLink}" target="_blank">${r.liveLink}</a></dd>` : ''}
       ${r.finalReport ? `<dt><strong>Final report</strong></dt><dd>📎 ${r.finalReport}</dd>` : ''}
       <dt><strong>Status</strong></dt><dd>${statusBadge(r.status)}</dd>
-    </dl>`);
+    </dl>
+    <div style="margin-top:18px;border-top:1px solid var(--border);padding-top:14px">
+      <h4 style="margin:0 0 10px">💬 Trainer / Admin Comments</h4>
+      <div id="commentList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px">
+        <span class="hint">Loading comments…</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-start">
+        <textarea id="commentBox" rows="2" style="flex:1" placeholder="Add a comment for the other staff member…"></textarea>
+        <button class="btn btn-sm btn-primary" onclick="addComment('${r.id}')">Post</button>
+      </div>
+    </div>`);
+  loadComments(r.id);
+}
+
+async function loadComments(requestId) {
+  const list = $('commentList');
+  if (!list) return;
+  try {
+    const comments = await API.getRequestComments(requestId);
+    if (!$('commentList')) return;
+    list.innerHTML = comments.length
+      ? comments.map(c => `
+        <div class="comment">
+          <div style="font-size:.78rem;color:var(--muted)">
+            <strong>${c.author}</strong> · <span class="badge badge-${c.role === 'admin' ? 'admin' : 'trainer'}">${c.role === 'admin' ? 'Admin' : 'Trainer'}</span> · ${new Date(c.at).toLocaleString()}
+          </div>
+          <div style="margin-top:4px;white-space:pre-wrap">${c.text}</div>
+        </div>`).join('')
+      : '<span class="hint">No comments yet — be the first to add one.</span>';
+  } catch (e) {
+    if (list) list.innerHTML = `<span class="hint">Could not load comments.</span>`;
+  }
+}
+
+async function addComment(requestId) {
+  const box = $('commentBox');
+  if (!box) return;
+  try {
+    await API.addRequestComment(requestId, box.value);
+    box.value = '';
+    toast('Comment added.');
+    loadComments(requestId);
+  } catch (e) { toast(e.message, 'error'); }
 }
 
 async function recommend(id) {
