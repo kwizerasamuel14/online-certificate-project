@@ -109,9 +109,15 @@ async function downloadCertificatePDF(c) {
   const rowY = 165;
   doc.setFontSize(9); doc.setTextColor(NAVY);
 
+  /* signature script text — rendered in italic times as a cursive-style
+     signature above the printed name line */
+  function drawSignature(name, x, y) {
+    doc.setFont('times', 'italic'); doc.setFontSize(16); doc.setTextColor(NAVY);
+    doc.text(name, x, y, { align: 'center' });
+  }
+
   // left signature
-  doc.setFont('times', 'italic'); doc.setFontSize(16);
-  doc.text('Clarisse Uwizeyimana', 60, rowY - 4, { align: 'center' });
+  drawSignature('Clarisse Uwizeyimana', 60, rowY - 4);
   doc.setDrawColor(NAVY); doc.setLineWidth(0.3);
   doc.line(30, rowY, 90, rowY);
   doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
@@ -120,8 +126,7 @@ async function downloadCertificatePDF(c) {
   doc.text('FOUNDER & CEO', 60, rowY + 8, { align: 'center' });
 
   // right signature
-  doc.setFont('times', 'italic'); doc.setFontSize(16); doc.setTextColor(NAVY);
-  doc.text('Christophe Nshimiyimana', W - 60, rowY - 4, { align: 'center' });
+  drawSignature('Christophe Nshimiyimana', W - 60, rowY - 4);
   doc.setDrawColor(NAVY); doc.line(W - 90, rowY, W - 30, rowY);
   doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
   doc.text('Christophe Nshimiyimana', W - 60, rowY + 4, { align: 'center' });
@@ -130,9 +135,21 @@ async function downloadCertificatePDF(c) {
   doc.setFontSize(6.5);
   doc.text('Program Manager Signature', W - 60, rowY + 12, { align: 'center' });
 
-  // centre stamp — circular, with the official logo inside
+  // centre stamp — circular OFFICIAL seal with the logo inside
   doc.setDrawColor(NAVY); doc.setLineWidth(0.6);
   doc.circle(cx, rowY, 11, 'S');
+  // "OFFICIAL" ring text around the stamp
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(3.2); doc.setTextColor(NAVY);
+  const stampLabel = '· OFFICIAL · UP SKILLS HUB ';
+  // draw the label evenly around the top arc of the stamp circle
+  (function stampRingText() {
+    const radius = 12.2, start = -125, sweep = 70; // degrees
+    const chars = stampLabel.split('');
+    chars.forEach((ch, i) => {
+      const a = (start + (sweep / (chars.length - 1)) * i) * Math.PI / 180;
+      doc.text(ch, cx + radius * Math.cos(a), rowY + radius * Math.sin(a) + 1, { align: 'center' });
+    });
+  })();
   if (logoDataUrl) {
     try { doc.addImage(logoDataUrl, 'PNG', cx - 10, rowY - 10, 20, 20); }
     catch (e) { /* fall through to text stamp */ }
@@ -153,10 +170,20 @@ async function downloadCertificatePDF(c) {
   doc.text('Up Skills Hub, Remera, Kigali, Rwanda', cx, H - 19, { align: 'center' });
   doc.text('www.upskillshub.com  ·  info@upskillshub.com  ·  +250 781 796 283', cx, H - 14, { align: 'center' });
 
-  // QR code (verification URL) bottom-right
+  // QR code (verification URL) bottom-right, with caption + border
   try {
-    const qrDataUrl = await makeQrDataUrl(c.verifyUrl || ('https://upskillshub.com/verify/' + c.certificateNumber));
-    if (qrDataUrl) doc.addImage(qrDataUrl, 'PNG', W - 40, H - 38, 22, 22);
+    const verifyTarget = c.verifyUrl || ('https://upskillshub.com/verify/' + c.certificateNumber);
+    const qrDataUrl = await makeQrDataUrl(verifyTarget);
+    if (qrDataUrl) {
+      const qx = W - 38, qy = H - 44, qs = 26;
+      doc.setDrawColor(NAVY); doc.setLineWidth(0.2);
+      doc.rect(qx - 2, qy - 2, qs + 4, qs + 7);
+      doc.addImage(qrDataUrl, 'PNG', qx, qy, qs, qs);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(6); doc.setTextColor(NAVY);
+      doc.text('SCAN TO VERIFY', qx + qs / 2, qy + qs + 3.4, { align: 'center' });
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(5.2); doc.setTextColor(GREY);
+      doc.text(c.certificateNumber, qx + qs / 2, qy + qs + 6.2, { align: 'center' });
+    }
   } catch (_) { /* QR optional — never block the download */ }
 
   // download

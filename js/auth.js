@@ -6,9 +6,10 @@
 
 let selectedRole = 'trainer';
 
-/* Default accounts (as provided by the supervisor).
-   Only Trainer and Admin can log in — public users no longer have accounts.
-   Passwords can be changed from this page and the change
+/* Default staff accounts (as provided by the supervisor).
+   Students create their own accounts via the Sign Up form on login.html
+   (stored in localStorage under 'ush_students').
+   Staff passwords can be changed from this page and the change
    is persisted in localStorage. */
 const DEFAULT_ACCOUNTS = {
   trainer: {
@@ -30,6 +31,12 @@ const DEFAULT_ACCOUNTS = {
 };
 
 const ACCOUNTS_KEY = 'ush_accounts';
+const STUDENTS_KEY = 'ush_students';   // student accounts created via Sign Up
+
+function loadStudents() {
+  try { return JSON.parse(localStorage.getItem(STUDENTS_KEY)) || []; } catch { return []; }
+}
+function saveStudents(list) { localStorage.setItem(STUDENTS_KEY, JSON.stringify(list)); }
 
 function loadAccounts() {
   let saved = {};
@@ -55,8 +62,25 @@ function selectRole(role) {
 }
 
 function showLogin() {
+  ['signupSection', 'studentSection'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.style.display = 'none';
+  });
   document.getElementById('loginSection').style.display = '';
   document.getElementById('changeSection').style.display = 'none';
+}
+
+function showSignUp() {
+  document.getElementById('loginSection').style.display = 'none';
+  document.getElementById('studentSection').style.display = 'none';
+  document.getElementById('changeSection').style.display = 'none';
+  document.getElementById('signupSection').style.display = '';
+}
+
+function showStudentLogin() {
+  document.getElementById('loginSection').style.display = 'none';
+  document.getElementById('signupSection').style.display = 'none';
+  document.getElementById('changeSection').style.display = 'none';
+  document.getElementById('studentSection').style.display = '';
 }
 function showChangePassword() {
   document.getElementById('loginSection').style.display = 'none';
@@ -81,6 +105,52 @@ document.getElementById('loginForm').addEventListener('submit', e => {
   setCurrentUser({ role, name: account.name, email: account.email });
   toast(`Welcome, ${account.name}! Redirecting…`, 'success');
   setTimeout(() => (location.href = account.redirect), 900);
+});
+
+/* ---------- Student Sign Up ---------- */
+document.getElementById('signupForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+  const pass = document.getElementById('signupPassword').value;
+  const confirm = document.getElementById('signupConfirm').value;
+  const passErr = document.getElementById('signupPassErr');
+  const confirmErr = document.getElementById('signupConfirmErr');
+  const dupErr = document.getElementById('studentError');
+  passErr.style.display = confirmErr.style.display = dupErr.style.display = 'none';
+
+  if (pass.length < 6) { passErr.style.display = 'block'; return; }
+  if (pass !== confirm) { confirmErr.style.display = 'block'; return; }
+
+  /* email must not clash with a staff account either */
+  const accounts = loadAccounts();
+  const staffClash = Object.values(accounts).some(a => a.email.toLowerCase() === email);
+  const students = loadStudents();
+  if (staffClash || students.some(s => s.email === email)) {
+    dupErr.style.display = 'block'; return;
+  }
+
+  students.push({ name, email, password: pass });
+  saveStudents(students);
+  setCurrentUser({ role: 'user', name, email });
+  toast(`Welcome, ${name}! Setting up your account…`, 'success');
+  setTimeout(() => (location.href = 'my-certificates.html'), 900);
+});
+
+/* ---------- Student Login ---------- */
+document.getElementById('studentForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const email = document.getElementById('studentEmail').value.trim().toLowerCase();
+  const password = document.getElementById('studentPassword').value;
+  const err = document.getElementById('studentLoginError');
+  err.style.display = 'none';
+
+  const student = loadStudents().find(s => s.email === email && s.password === password);
+  if (!student) { err.style.display = 'block'; return; }
+
+  setCurrentUser({ role: 'user', name: student.name, email: student.email });
+  toast(`Welcome back, ${student.name}! Redirecting…`, 'success');
+  setTimeout(() => (location.href = 'my-certificates.html'), 900);
 });
 
 /* ---------- Change password (Trainer & Admin) ---------- */
@@ -122,6 +192,9 @@ document.getElementById('changeForm').addEventListener('submit', e => {
     showChangePassword();
     document.getElementById('changeWho').textContent =
       `Logged in as ${user.name} (${user.email}).`;
+  } else if (user && user.role === 'user') {
+    /* student already signed in — go straight to their certificates */
+    location.replace('my-certificates.html');
   } else {
     showLogin();
     selectRole(selectedRole);

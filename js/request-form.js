@@ -19,6 +19,11 @@ populateProgramSelect($('program'));
    staff accounts are named "Trainer"/"Admin" and must not leak into the field) */
 if (user && user.role === 'user' && user.name) {
   $('fullName').value = user.name;
+  if (user.email) {
+    const em = $('email');
+    em.value = user.email;
+    em.readOnly = true;   // requests are always linked to the signed-in account
+  }
 }
 
 /* ---- Edit mode: only allowed while Pending Review ---- */

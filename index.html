@@ -76,7 +76,13 @@
 /* hide staff/guest-only tiles for the public */
 (function () {
   const u = getCurrentUser();
-  if (!u) document.getElementById('tileMine').style.display = 'none';
+  const mine = document.getElementById('tileMine');
+  if (!u) {
+    /* not signed in — send visitors to the login/sign-up page */
+    mine.href = 'login.html';
+    mine.querySelector('p').textContent =
+      'Create an account or log in to track your requests and download your certificates.';
+  }
   if (!u || u.role !== 'admin') document.getElementById('tileAdmin').style.display = 'none';
 })();
 </script>

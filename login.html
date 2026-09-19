@@ -17,6 +17,9 @@
   .login-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
   .login-note { text-align: center; color: var(--muted); font-size: .82rem; margin-top: 16px; }
   .login-note a { color: var(--primary); }
+  .login-divider { display: flex; align-items: center; gap: 10px; margin: 18px 0 14px; color: var(--muted); font-size: .78rem; }
+  .login-divider::before, .login-divider::after { content: ''; flex: 1; border-top: 1px solid var(--border); }
+  #studentError { display: none; }
   /* hidden/shown dynamically by auth.js (inline style) */
 </style>
 </head>
@@ -36,6 +39,7 @@
           <button class="btn btn-primary btn-sm" type="button" data-role="trainer" onclick="selectRole('trainer')">🧑‍🏫 Trainer</button>
           <button class="btn btn-ghost  btn-sm" type="button" data-role="admin"   onclick="selectRole('admin')">🛡️ Admin</button>
         </div>
+        <p class="login-note">Student / trainee? <a href="#" onclick="showStudentLogin();return false;">Log in here</a> or <a href="#" onclick="showSignUp();return false;">sign up</a></p>
 
         <form id="loginForm" novalidate>
           <div class="field" style="margin-bottom:14px">
@@ -50,7 +54,66 @@
           <button class="btn btn-primary" type="submit" id="loginBtn" style="width:100%;margin-top:16px">Login</button>
         </form>
 
+        <div class="login-divider">or</div>
+
+        <button class="btn btn-outline" type="button" style="width:100%" onclick="showSignUp()">Create a new account</button>
+
         <p class="login-note">Just visiting? <a href="verify.html">Verify a certificate</a> — no account needed.</p>
+      </div>
+
+      <!-- ===== STUDENT SIGN-UP FORM ===== -->
+      <div id="signupSection" style="display:none">
+        <div class="script">Join us</div>
+        <h1>Create your account</h1>
+        <p class="sub">Sign up to track your certificate requests and download your certificates.</p>
+
+        <form id="signupForm" novalidate>
+          <div class="field" style="margin-bottom:14px">
+            <label for="signupName">Full name</label>
+            <input type="text" id="signupName" placeholder="e.g. Aline Mukamana" autocomplete="name" required>
+          </div>
+          <div class="field" style="margin-bottom:14px">
+            <label for="signupEmail">Email address</label>
+            <input type="email" id="signupEmail" placeholder="you@example.com" autocomplete="email" required>
+          </div>
+          <div class="field" style="margin-bottom:14px">
+            <label for="signupPassword">Password</label>
+            <input type="password" id="signupPassword" placeholder="At least 6 characters" autocomplete="new-password" required>
+            <span class="hint">At least 6 characters.</span>
+            <span class="error-msg" id="signupPassErr">Password must be at least 6 characters.</span>
+          </div>
+          <div class="field" style="margin-bottom:6px">
+            <label for="signupConfirm">Confirm password</label>
+            <input type="password" id="signupConfirm" autocomplete="new-password" required>
+            <span class="error-msg" id="signupConfirmErr">Passwords do not match.</span>
+          </div>
+          <span class="error-msg" id="studentError">An account with this email already exists. Please log in instead.</span>
+          <button class="btn btn-primary" type="submit" style="width:100%;margin-top:16px">Sign Up</button>
+        </form>
+
+        <p class="login-note">Already have an account? <a href="#" onclick="showLogin();return false;">Log in</a></p>
+      </div>
+
+      <!-- ===== STUDENT SIGN-IN FORM ===== -->
+      <div id="studentSection" style="display:none">
+        <div class="script">Welcome back</div>
+        <h1>Student login</h1>
+        <p class="sub">Sign in to view your certificate requests and certificates.</p>
+
+        <form id="studentForm" novalidate>
+          <div class="field" style="margin-bottom:14px">
+            <label for="studentEmail">Email address</label>
+            <input type="email" id="studentEmail" placeholder="you@example.com" autocomplete="username" required>
+          </div>
+          <div class="field" style="margin-bottom:6px">
+            <label for="studentPassword">Password</label>
+            <input type="password" id="studentPassword" placeholder="••••••••" autocomplete="current-password" required>
+            <span class="error-msg" id="studentLoginError">Incorrect email or password. Please try again.</span>
+          </div>
+          <button class="btn btn-primary" type="submit" style="width:100%;margin-top:16px">Login</button>
+        </form>
+
+        <p class="login-note">Staff member? <a href="#" onclick="showLogin();return false;">Trainer / Admin sign-in</a></p>
       </div>
 
       <!-- ===== CHANGE PASSWORD FORM ===== -->
