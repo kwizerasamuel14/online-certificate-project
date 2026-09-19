@@ -108,10 +108,12 @@
           <div class="field" style="margin-bottom:6px">
             <label for="studentPassword">Password</label>
             <input type="password" id="studentPassword" placeholder="••••••••" autocomplete="current-password" required>
-            <span class="error-msg" id="studentLoginError">Incorrect email or password. Please try again.</span>
+            <span class="error-msg" id="studentLoginError">Incorrect email or password — or no account exists on this browser. If you signed up before, please create a new account (Sign Up) with the same email; demo accounts are stored per browser and may have been cleared.</span>
           </div>
           <button class="btn btn-primary" type="submit" style="width:100%;margin-top:16px">Login</button>
         </form>
+
+        <p class="login-note">No account yet? <a href="#" onclick="showSignUp();return false;">Sign up</a> — it takes a minute.</p>
 
         <p class="login-note">Staff member? <a href="#" onclick="showLogin();return false;">Trainer / Admin sign-in</a></p>
       </div>
@@ -150,10 +152,10 @@
 </main>
 <div id="footer"></div>
 
-<script src="data/mock-data.js"></script>
-<script src="js/api.js"></script>
-<script src="js/layout.js"></script>
-<script src="js/auth.js"></script>
+<script src="data/mock-data.js?v=20260708-1"></script>
+<script src="js/api.js?v=20260708-1"></script>
+<script src="js/layout.js?v=20260708-1"></script>
+<script src="js/auth.js?v=20260708-1"></script>
 <script>initPage(null);</script>
 </body>
 </html>
