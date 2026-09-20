@@ -99,6 +99,16 @@ document.getElementById('loginForm').addEventListener('submit', e => {
   const match = Object.entries(accounts)
     .find(([, a]) => a.email.toLowerCase() === email && a.password === password);
 
+  /* students created via Sign Up can also sign in from this main form —
+     no need to find the separate student login */
+  const student = !match && loadStudents().find(s => s.email === email && s.password === password);
+  if (student) {
+    setCurrentUser({ role: 'user', name: student.name, email: student.email });
+    toast(`Welcome back, ${student.name}! Redirecting…`, 'success');
+    setTimeout(() => (location.href = 'my-certificates.html'), 900);
+    return;
+  }
+
   if (!match) { err.style.display = 'block'; return; }
 
   const [role, account] = match;
