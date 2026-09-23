@@ -95,15 +95,16 @@ async function downloadCertificatePDF(c) {
   ];
   bodyLines.forEach((line, i) => doc.text(line, cx, 102 + i * 7, { align: 'center' }));
 
-  // start / end dates — left, beside the body (per official template)
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(NAVY);
-  doc.text('Start Date:', 20, 118);
-  doc.setFont('helvetica', 'normal'); doc.setTextColor('#33405c');
-  doc.text(formatDate(c.startDate), 42, 118);
+  // start / end dates — centred below the body text (per supervisor's reference)
+  doc.setFontSize(9);
   doc.setFont('helvetica', 'bold'); doc.setTextColor(NAVY);
-  doc.text('End Date:', 20, 124);
+  doc.text('Start Date:', cx - 3, 133, { align: 'right' });
   doc.setFont('helvetica', 'normal'); doc.setTextColor('#33405c');
-  doc.text(formatDate(c.endDate), 42, 124);
+  doc.text(formatDate(c.startDate), cx + 3, 133);
+  doc.setFont('helvetica', 'bold'); doc.setTextColor(NAVY);
+  doc.text('End Date:', cx - 3, 139, { align: 'right' });
+  doc.setFont('helvetica', 'normal'); doc.setTextColor('#33405c');
+  doc.text(formatDate(c.endDate), cx + 3, 139);
 
   // ---- signatures row ----
   const rowY = 165;
@@ -132,8 +133,6 @@ async function downloadCertificatePDF(c) {
   doc.text('Christophe Nshimiyimana', W - 60, rowY + 4, { align: 'center' });
   doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(GREY);
   doc.text('PROGRAM DIRECTOR', W - 60, rowY + 8, { align: 'center' });
-  doc.setFontSize(6.5);
-  doc.text('Program Manager Signature', W - 60, rowY + 12, { align: 'center' });
 
   // centre stamp — circular OFFICIAL seal with the logo inside
   doc.setDrawColor(NAVY); doc.setLineWidth(0.6);
@@ -170,19 +169,21 @@ async function downloadCertificatePDF(c) {
   doc.text('Up Skills Hub, Remera, Kigali, Rwanda', cx, H - 19, { align: 'center' });
   doc.text('www.upskillshub.com  ·  info@upskillshub.com  ·  +250 781 796 283', cx, H - 14, { align: 'center' });
 
-  // QR code (verification URL) bottom-right, with caption + border
+  // QR code (verification URL) — beside the official stamp,
+  // per the supervisor's reference template
   try {
     const verifyTarget = c.verifyUrl || ('https://upskillshub.com/verify/' + c.certificateNumber);
     const qrDataUrl = await makeQrDataUrl(verifyTarget);
     if (qrDataUrl) {
-      const qx = W - 38, qy = H - 44, qs = 26;
+      const qs = 22, qx = cx + 20, qy = rowY - 11;
+      // white backing box (scan contrast) with a thin navy border
+      doc.setFillColor('#ffffff');
+      doc.rect(qx - 2, qy - 2, qs + 4, qs + 4, 'F');
       doc.setDrawColor(NAVY); doc.setLineWidth(0.2);
-      doc.rect(qx - 2, qy - 2, qs + 4, qs + 7);
+      doc.rect(qx - 2, qy - 2, qs + 4, qs + 4);
       doc.addImage(qrDataUrl, 'PNG', qx, qy, qs, qs);
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(6); doc.setTextColor(NAVY);
-      doc.text('SCAN TO VERIFY', qx + qs / 2, qy + qs + 3.4, { align: 'center' });
-      doc.setFont('helvetica', 'normal'); doc.setFontSize(5.2); doc.setTextColor(GREY);
-      doc.text(c.certificateNumber, qx + qs / 2, qy + qs + 6.2, { align: 'center' });
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(5.5); doc.setTextColor(NAVY);
+      doc.text('Scan to verify', qx + qs / 2, qy + qs + 4, { align: 'center' });
     }
   } catch (_) { /* QR optional — never block the download */ }
 

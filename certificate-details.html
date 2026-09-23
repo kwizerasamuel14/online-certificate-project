@@ -51,7 +51,7 @@
   .cert-sig .sig-line { border-top: 1.5px solid #1b2a4a; margin: 6px auto 4px; width: 190px; padding-top: 4px; font-size: .78rem; font-weight: 700; }
   .cert-sig .sig-role { font-size: .72rem; letter-spacing: 1px; text-transform: uppercase; color: #5a6478; }
   .cert-sig .sig-sub { font-size: .62rem; color: #5a6478; margin-top: 2px; }
-  .cert-dates-side { text-align: left; font-family: Lato, sans-serif; font-size: .85rem; color: #1b2a4a; margin: 10px 0 4px; display: flex; gap: 40px; justify-content: flex-start; padding-left: 4px; }
+  .cert-dates-side { text-align: left; font-family: Lato, sans-serif; font-size: .85rem; color: #1b2a4a; margin: 14px 0 10px; display: flex; gap: 40px; justify-content: center; }
   .cert-dates-side b { font-weight: 700; }
 
   .cert-stamp {
@@ -71,6 +71,11 @@
   .cert-extras .qr { background: #fff; padding: 8px; border: 1px solid var(--border); }
   .detail-row { display: grid; grid-template-columns: 170px 1fr; gap: 10px 14px; font-size: .95rem; }
   .detail-row dt { font-weight: 700; color: var(--dark); }
+  @media (max-width: 640px) {
+    .cert-paper { padding: 28px 18px 20px; }
+    .cert-row { grid-template-columns: 1fr; justify-items: center; gap: 14px; }
+    .cert-dates-side { flex-direction: column; gap: 6px; align-items: center; }
+  }
   @media print { body * { visibility: hidden; } .cert-paper, .cert-paper * { visibility: visible; } .cert-paper { position: absolute; inset: 0; } }
 </style>
 </head>
@@ -124,13 +129,18 @@
                 <div class="sig-role">Founder &amp; CEO</div>
               </div>
             </div>
-            <div class="cert-stamp"><img src="Logo%20Image.jpeg" alt="Up Skills Hub logo"></div>
+            <div style="display:flex;align-items:center;gap:18px">
+              <div class="cert-stamp"><img src="Logo%20Image.jpeg" alt="Up Skills Hub logo"></div>
+              <div style="text-align:center">
+                <div class="qr" id="c-qr"></div>
+                <div style="font-size:.62rem;color:#5a6478;font-family:Lato,sans-serif;margin-top:5px">Scan to verify</div>
+              </div>
+            </div>
             <div style="display:flex;align-items:flex-end">
               <div class="cert-sig">
                 <div class="sig-script">Christophe Nshimiyimana</div>
                 <div class="sig-line">Christophe Nshimiyimana</div>
                 <div class="sig-role">Program Director</div>
-                <div class="sig-sub">Program Manager Signature</div>
               </div>
             </div>
           </div>
@@ -142,10 +152,9 @@
         </div>
 
         <div class="cert-extras">
-          <div class="qr" id="c-qr"></div>
           <div>
             <div id="c-status"></div>
-            <span class="hint">Scan the QR code or use the Verify Online button to confirm authenticity.</span>
+            <span class="hint">Scan the QR code on the certificate or use the Verify Online button to confirm authenticity.</span>
           </div>
         </div>
       </div>
