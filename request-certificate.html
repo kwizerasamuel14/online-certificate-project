@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Request Certificate — Up Skills Hub</title>
+<title>Request Certificate ï¿½ Up Skills Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
@@ -43,7 +43,7 @@
 
           <div class="field full" id="f-traineeId">
             <label for="traineeId">Trainee ID
-              <span class="hint">Must be in CAPITAL LETTERS — Trainee: USH-TRA-YEAR-ID · Intern: USH-INT-YEAR-ID</span>
+              <span class="hint">Must be in CAPITAL LETTERS ï¿½ Trainee: USH-TRA-YEAR-ID ï¿½ Intern: USH-INT-YEAR-ID</span>
             </label>
             <input type="text" id="traineeId" placeholder="e.g. USH-INT-2026-00230" style="text-transform:uppercase">
             <span class="error-msg">Format must be USH-TRA-YYYY-#### or USH-INT-YYYY-####.</span>
@@ -111,18 +111,18 @@
 
       <!-- 3. Required Documents (interns, optional) -->
       <section class="form-section">
-        <h2>3. Required Documents <span style="font-weight:400;color:var(--muted)">(for interns — optional)</span></h2>
+        <h2>3. Required Documents <span style="font-weight:400;color:var(--muted)">(for interns ï¿½ optional)</span></h2>
         <div class="form-grid">
           <div class="field">
             <label for="finalReport">Final Report</label>
             <input type="file" id="finalReport" accept=".pdf,.docx,.zip">
-            <span class="hint">PDF, DOCX, ZIP — Maximum 10 MB</span>
+            <span class="hint">PDF, DOCX, ZIP ï¿½ Maximum 10 MB</span>
             <span class="error-msg" id="finalReport-err">File must be PDF, DOCX or ZIP, max 10 MB.</span>
           </div>
           <div class="field">
-            <label for="logbook">Logbook (interns only — optional)</label>
+            <label for="logbook">Logbook (interns only ï¿½ optional)</label>
             <input type="file" id="logbook" accept=".pdf,.docx,.zip" multiple>
-            <span class="hint">PDF, DOCX, ZIP — Maximum 10 MB each</span>
+            <span class="hint">PDF, DOCX, ZIP ï¿½ Maximum 10 MB each</span>
             <span class="error-msg" id="logbook-err">Files must be PDF, DOCX or ZIP, max 10 MB.</span>
           </div>
           <div class="field full" id="f-sourceLink">
@@ -178,12 +178,12 @@
 </main>
 <div id="footer"></div>
 
-<script src="data/mock-data.js?v=20260920-1"></script>
-<script src="js/api.js?v=20260920-1"></script>
-<script src="js/layout.js?v=20260920-1"></script>
-<script src="js/request-form.js?v=20260920-1"></script>
+<script src="data/mock-data.js?v=20260925-1"></script>
+<script src="js/api.js?v=20260925-1"></script>
+<script src="js/layout.js?v=20260925-1"></script>
+<script src="js/request-form.js?v=20260925-1"></script>
 <script>initPage('request');
-/* guests have no account — don't offer the gated My Requests page */
+/* guests have no account ï¿½ don't offer the gated My Requests page */
 if (!getCurrentUser()) {
   const l = document.getElementById('successViewLink');
   l.textContent = 'Save your Request ID';

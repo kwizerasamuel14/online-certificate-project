@@ -46,6 +46,15 @@ async function downloadCertificatePDF(c) {
   }
   const logoDataUrl = await loadCircularLogo();
 
+  // supervisor-provided scans: handwritten signatures ("2 signatures.jpeg",
+  // top = FOUNDER & CEO, bottom = PROGRAM DIRECTOR) and the official stamp
+  const sigCeo = await loadInkCrop('2%20signatures.jpeg',
+    { x: 0.02, y: 0.045, w: 0.96, h: 0.26 }, { hi: 215, lo: 135 });
+  const sigDirector = await loadInkCrop('2%20signatures.jpeg',
+    { x: 0.08, y: 0.585, w: 0.90, h: 0.365 }, { hi: 215, lo: 135 });
+  const stampImg = await loadInkCrop('Stamp.jpeg',
+    { x: 0.03, y: 0.02, w: 0.94, h: 0.96 }, { hi: 200, lo: 105 });
+
   // parchment background
   doc.setFillColor(PALE);
   doc.rect(0, 0, W, H, 'F');
@@ -110,7 +119,17 @@ async function downloadCertificatePDF(c) {
   const rowY = 165;
   doc.setFontSize(9); doc.setTextColor(NAVY);
 
-  // left signature — the space above the line is left blank for a handwritten signature
+  // scanned handwritten signatures in the spaces above the lines
+  if (sigCeo) {
+    const sw = 32, sgh = sw * sigCeo.ratio;
+    doc.addImage(sigCeo.url, 'PNG', 60 - sw / 2, rowY - 2 - sgh, sw, sgh);
+  }
+  if (sigDirector) {
+    const sw = 30, sgh = sw * sigDirector.ratio;
+    doc.addImage(sigDirector.url, 'PNG', W - 60 - sw / 2, rowY - 2 - sgh, sw, sgh);
+  }
+
+  // left signature
   doc.setDrawColor(NAVY); doc.setLineWidth(0.3);
   doc.line(30, rowY, 90, rowY);
   doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
@@ -118,39 +137,47 @@ async function downloadCertificatePDF(c) {
   doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(GREY);
   doc.text('FOUNDER & CEO', 60, rowY + 8, { align: 'center' });
 
-  // right signature — the space above the line is left blank for a handwritten signature
+  // right signature
   doc.setDrawColor(NAVY); doc.line(W - 90, rowY, W - 30, rowY);
   doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
   doc.text('Christophe Nshimiyimana', W - 60, rowY + 4, { align: 'center' });
   doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(GREY);
   doc.text('PROGRAM DIRECTOR', W - 60, rowY + 8, { align: 'center' });
 
-  // centre stamp — circular OFFICIAL seal with the logo inside
-  doc.setDrawColor(NAVY); doc.setLineWidth(0.6);
-  doc.circle(cx, rowY, 11, 'S');
-  // "OFFICIAL" ring text around the stamp
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(3.2); doc.setTextColor(NAVY);
-  const stampLabel = '· OFFICIAL · UP SKILLS HUB ';
-  // draw the label evenly around the top arc of the stamp circle
-  (function stampRingText() {
-    const radius = 12.2, start = -125, sweep = 70; // degrees
-    const chars = stampLabel.split('');
-    chars.forEach((ch, i) => {
-      const a = (start + (sweep / (chars.length - 1)) * i) * Math.PI / 180;
-      doc.text(ch, cx + radius * Math.cos(a), rowY + radius * Math.sin(a) + 1, { align: 'center' });
-    });
-  })();
-  if (logoDataUrl) {
-    try { doc.addImage(logoDataUrl, 'PNG', cx - 10, rowY - 10, 20, 20); }
-    catch (e) { /* fall through to text stamp */ }
+  // centre stamp — the official Up Skills Hub seal (supervisor's stamp scan),
+  // drawn larger than before to match the real certificate
+  if (stampImg) {
+    try {
+      const ss = 30, st = ss * stampImg.ratio;
+      doc.addImage(stampImg.url, 'PNG', cx - ss / 2, rowY - st / 2, ss, st);
+    } catch (e) { /* fall through to drawn seal */ }
   }
-  if (!logoDataUrl) {
-    doc.setDrawColor(GOLD); doc.setLineWidth(0.3);
-    doc.circle(cx, rowY, 9.2, 'S');
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(NAVY);
-    doc.text('USH', cx, rowY + 1, { align: 'center' });
-    doc.setFontSize(4.5);
-    doc.text('UP SKILLS HUB', cx, rowY + 5, { align: 'center' });
+  if (!stampImg) {
+    // fallback: drawn circular OFFICIAL seal with the logo inside
+    doc.setDrawColor(NAVY); doc.setLineWidth(0.6);
+    doc.circle(cx, rowY, 11, 'S');
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(3.2); doc.setTextColor(NAVY);
+    const stampLabel = '· OFFICIAL · UP SKILLS HUB ';
+    (function stampRingText() {
+      const radius = 12.2, start = -125, sweep = 70; // degrees
+      const chars = stampLabel.split('');
+      chars.forEach((ch, i) => {
+        const a = (start + (sweep / (chars.length - 1)) * i) * Math.PI / 180;
+        doc.text(ch, cx + radius * Math.cos(a), rowY + radius * Math.sin(a) + 1, { align: 'center' });
+      });
+    })();
+    if (logoDataUrl) {
+      try { doc.addImage(logoDataUrl, 'PNG', cx - 10, rowY - 10, 20, 20); }
+      catch (e) { /* fall through to text stamp */ }
+    }
+    if (!logoDataUrl) {
+      doc.setDrawColor(GOLD); doc.setLineWidth(0.3);
+      doc.circle(cx, rowY, 9.2, 'S');
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(NAVY);
+      doc.text('USH', cx, rowY + 1, { align: 'center' });
+      doc.setFontSize(4.5);
+      doc.text('UP SKILLS HUB', cx, rowY + 5, { align: 'center' });
+    }
   }
 
   // footer (matches official template contact info)
@@ -212,4 +239,47 @@ function makeQrDataUrl(text) {
       resolve(null);
     }
   });
+}
+
+/**
+ * Loads a photo, crops a fractional region and knocks the light paper
+ * background out to transparency (luminance key), leaving only the ink.
+ * Used for the supervisor-provided signature scans and the official stamp.
+ * Returns { url, ratio } or null when the image cannot be processed
+ * (e.g. the page is opened directly from disk without a web server —
+ * browsers block canvas reads for file:// images).
+ * @param {string} src image path
+ * @param {{x:number,y:number,w:number,h:number}} crop fractional region of the photo
+ * @param {{hi?:number,lo?:number}} opts luma thresholds (hi..lo → alpha 0..255)
+ */
+async function loadInkCrop(src, crop, opts = {}) {
+  try {
+    const img = await new Promise((resolve, reject) => {
+      const im = new Image();
+      im.onload = () => resolve(im);
+      im.onerror = reject;
+      im.src = src;
+    });
+    const sx = Math.round(img.width * crop.x);
+    const sy = Math.round(img.height * crop.y);
+    const sw = Math.round(img.width * crop.w);
+    const sh = Math.round(img.height * crop.h);
+    const scale = Math.min(1, 900 / sw);            // cap canvas size
+    const cw = Math.max(1, Math.round(sw * scale));
+    const ch = Math.max(1, Math.round(sh * scale));
+    const canvas = document.createElement('canvas');
+    canvas.width = cw; canvas.height = ch;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
+    const frame = ctx.getImageData(0, 0, cw, ch);
+    const px = frame.data;
+    const hi = opts.hi ?? 215, lo = opts.lo ?? 135; // luma key thresholds
+    for (let i = 0; i < px.length; i += 4) {
+      const luma = 0.299 * px[i] + 0.587 * px[i + 1] + 0.114 * px[i + 2];
+      let a = (255 * (hi - luma)) / (hi - lo);
+      px[i + 3] = a < 0 ? 0 : a > 255 ? 255 : a;
+    }
+    ctx.putImageData(frame, 0, 0);
+    return { url: canvas.toDataURL('image/png'), ratio: ch / cw };
+  } catch (e) { return null; }
 }
