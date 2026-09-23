@@ -58,8 +58,13 @@
   .cert-dates-side { text-align: left; font-family: Lato, sans-serif; font-size: .85rem; color: #1b2a4a; margin: 14px 0 10px; display: flex; gap: 40px; justify-content: center; }
   .cert-dates-side b { font-weight: 700; }
 
+  .cert-logo {
+    width: 100px; height: 100px; border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 0 2px rgba(27,42,74,.15);
+  }
   .cert-stamp {
-    width: 118px; height: 118px;
+    width: 126px; height: 126px;
     display: flex; align-items: center; justify-content: center;
   }
   .cert-stamp img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
@@ -131,7 +136,8 @@
                 <div class="sig-role">Founder &amp; CEO</div>
               </div>
             </div>
-            <div style="display:flex;align-items:center;gap:18px">
+            <div style="display:flex;align-items:center;gap:12px">
+              <img class="cert-logo" src="Logo%20Image.jpeg" alt="Up Skills Hub logo">
               <div class="cert-stamp"><img src="Stamp.jpeg" alt="Official Up Skills Hub stamp"></div>
               <div style="text-align:center">
                 <div class="qr" id="c-qr"></div>
@@ -184,11 +190,11 @@
 </main>
 <div id="footer"></div>
 
-<script src="data/mock-data.js?v=20260925-1"></script>
-<script src="js/api.js?v=20260925-1"></script>
-<script src="js/layout.js?v=20260925-1"></script>
-<script src="js/pdf.js?v=20260925-1"></script>
-<script src="js/details.js?v=20260925-1"></script>
+<script src="data/mock-data.js?v=20260925-2"></script>
+<script src="js/api.js?v=20260925-2"></script>
+<script src="js/layout.js?v=20260925-2"></script>
+<script src="js/pdf.js?v=20260925-2"></script>
+<script src="js/details.js?v=20260925-2"></script>
 <script>initPage('details');</script>
 </body>
 </html>

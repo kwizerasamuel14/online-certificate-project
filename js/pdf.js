@@ -144,18 +144,24 @@ async function downloadCertificatePDF(c) {
   doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(GREY);
   doc.text('PROGRAM DIRECTOR', W - 60, rowY + 8, { align: 'center' });
 
-  // centre stamp — the official Up Skills Hub seal (supervisor's stamp scan),
-  // drawn larger than before to match the real certificate
+  // centre: enlarged logo (restored) with the official stamp scan next to it,
+  // in the circular space reserved on the official template
+  if (logoDataUrl) {
+    try {
+      const ls = 34; // enlarged logo
+      doc.addImage(logoDataUrl, 'PNG', cx - ls / 2 - 4, rowY - ls / 2, ls, ls);
+    } catch (e) { /* logo optional */ }
+  }
   if (stampImg) {
     try {
-      const ss = 30, st = ss * stampImg.ratio;
-      doc.addImage(stampImg.url, 'PNG', cx - ss / 2, rowY - st / 2, ss, st);
+      const ss = 27, st = ss * stampImg.ratio;
+      doc.addImage(stampImg.url, 'PNG', cx + 4, rowY - st / 2, ss, st);
     } catch (e) { /* fall through to drawn seal */ }
   }
   if (!stampImg) {
     // fallback: drawn circular OFFICIAL seal with the logo inside
     doc.setDrawColor(NAVY); doc.setLineWidth(0.6);
-    doc.circle(cx, rowY, 11, 'S');
+    doc.circle(cx + 15, rowY, 11, 'S');
     doc.setFont('helvetica', 'bold'); doc.setFontSize(3.2); doc.setTextColor(NAVY);
     const stampLabel = '· OFFICIAL · UP SKILLS HUB ';
     (function stampRingText() {
@@ -163,20 +169,16 @@ async function downloadCertificatePDF(c) {
       const chars = stampLabel.split('');
       chars.forEach((ch, i) => {
         const a = (start + (sweep / (chars.length - 1)) * i) * Math.PI / 180;
-        doc.text(ch, cx + radius * Math.cos(a), rowY + radius * Math.sin(a) + 1, { align: 'center' });
+        doc.text(ch, cx + 15 + radius * Math.cos(a), rowY + radius * Math.sin(a) + 1, { align: 'center' });
       });
     })();
-    if (logoDataUrl) {
-      try { doc.addImage(logoDataUrl, 'PNG', cx - 10, rowY - 10, 20, 20); }
-      catch (e) { /* fall through to text stamp */ }
-    }
     if (!logoDataUrl) {
       doc.setDrawColor(GOLD); doc.setLineWidth(0.3);
-      doc.circle(cx, rowY, 9.2, 'S');
+      doc.circle(cx + 15, rowY, 9.2, 'S');
       doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(NAVY);
-      doc.text('USH', cx, rowY + 1, { align: 'center' });
+      doc.text('USH', cx + 15, rowY + 1, { align: 'center' });
       doc.setFontSize(4.5);
-      doc.text('UP SKILLS HUB', cx, rowY + 5, { align: 'center' });
+      doc.text('UP SKILLS HUB', cx + 15, rowY + 5, { align: 'center' });
     }
   }
 
