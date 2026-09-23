@@ -110,15 +110,7 @@ async function downloadCertificatePDF(c) {
   const rowY = 165;
   doc.setFontSize(9); doc.setTextColor(NAVY);
 
-  /* signature script text — rendered in italic times as a cursive-style
-     signature above the printed name line */
-  function drawSignature(name, x, y) {
-    doc.setFont('times', 'italic'); doc.setFontSize(16); doc.setTextColor(NAVY);
-    doc.text(name, x, y, { align: 'center' });
-  }
-
-  // left signature
-  drawSignature('Clarisse Uwizeyimana', 60, rowY - 4);
+  // left signature — the space above the line is left blank for a handwritten signature
   doc.setDrawColor(NAVY); doc.setLineWidth(0.3);
   doc.line(30, rowY, 90, rowY);
   doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
@@ -126,8 +118,7 @@ async function downloadCertificatePDF(c) {
   doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(GREY);
   doc.text('FOUNDER & CEO', 60, rowY + 8, { align: 'center' });
 
-  // right signature
-  drawSignature('Christophe Nshimiyimana', W - 60, rowY - 4);
+  // right signature — the space above the line is left blank for a handwritten signature
   doc.setDrawColor(NAVY); doc.line(W - 90, rowY, W - 30, rowY);
   doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
   doc.text('Christophe Nshimiyimana', W - 60, rowY + 4, { align: 'center' });
