@@ -149,11 +149,13 @@ async function downloadCertificatePDF(c) {
 
   // centre row, exactly per the supervisor's reference template:
   // official stamp on the LEFT, enlarged logo in the MIDDLE,
-  // QR code on the RIGHT
+  // QR code on the RIGHT.
+  // Stamp centre is cx-30 so its right edge (cx-17) just clears the
+  // logo's left edge — the full stamp stays visible, nothing hidden behind the logo.
   if (stampImg) {
     try {
       const ss = 26, st = ss * stampImg.ratio;
-      doc.addImage(stampImg.url, 'PNG', cx - 20 - ss / 2, rowY - st / 2, ss, st);
+      doc.addImage(stampImg.url, 'PNG', cx - 30 - ss / 2, rowY - st / 2, ss, st);
     } catch (e) { /* fall through to drawn seal */ }
   }
   if (logoDataUrl) {
@@ -165,7 +167,7 @@ async function downloadCertificatePDF(c) {
   if (!stampImg) {
     // fallback: drawn circular OFFICIAL seal with the logo inside
     doc.setDrawColor(NAVY); doc.setLineWidth(0.6);
-    doc.circle(cx - 20, rowY, 11, 'S');
+    doc.circle(cx - 30, rowY, 11, 'S');
     doc.setFont('helvetica', 'bold'); doc.setFontSize(3.2); doc.setTextColor(NAVY);
     const stampLabel = '· OFFICIAL · UP SKILLS HUB ';
     (function stampRingText() {
@@ -173,16 +175,16 @@ async function downloadCertificatePDF(c) {
       const chars = stampLabel.split('');
       chars.forEach((ch, i) => {
         const a = (start + (sweep / (chars.length - 1)) * i) * Math.PI / 180;
-        doc.text(ch, cx - 20 + radius * Math.cos(a), rowY + radius * Math.sin(a) + 1, { align: 'center' });
+        doc.text(ch, cx - 30 + radius * Math.cos(a), rowY + radius * Math.sin(a) + 1, { align: 'center' });
       });
     })();
     if (!logoDataUrl) {
       doc.setDrawColor(GOLD); doc.setLineWidth(0.3);
-      doc.circle(cx - 20, rowY, 9.2, 'S');
+      doc.circle(cx - 30, rowY, 9.2, 'S');
       doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(NAVY);
-      doc.text('USH', cx - 20, rowY + 1, { align: 'center' });
+      doc.text('USH', cx - 30, rowY + 1, { align: 'center' });
       doc.setFontSize(4.5);
-      doc.text('UP SKILLS HUB', cx - 20, rowY + 5, { align: 'center' });
+      doc.text('UP SKILLS HUB', cx - 30, rowY + 5, { align: 'center' });
     }
   }
 
