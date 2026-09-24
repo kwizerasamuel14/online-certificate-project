@@ -47,11 +47,22 @@
   .cert-dates { font-family: Lato, sans-serif; font-size: .8rem; color: #33405c; }
   .cert-dates b { display: block; color: #1b2a4a; font-size: .85rem; margin-top: 2px; }
   .cert-sig { text-align: center; font-family: Lato, sans-serif; }
-  /* scanned handwritten signatures (photo "2 signatures.jpeg") — the cream
-     paper is blended away with multiply so only the ink shows */
-  .cert-sig .sig-ink { margin: 0 auto 2px; mix-blend-mode: multiply; background: no-repeat; }
-  .cert-sig .sig-ink.ceo { width: 150px; height: 72px; background-image: url('2%20signatures.jpeg'); background-size: 104.2% 384.6%; background-position: 50% 6.1%; }
-  .cert-sig .sig-ink.director { width: 150px; height: 108px; background-image: url('2%20signatures.jpeg'); background-size: 111.1% 274%; background-position: 80% 92.1%; }
+  /* scanned handwritten signatures — same source + same crops as the PDF
+     (js/pdf.js loadInkCrop): bottom crop = Clarisse (CEO), top crop = Christophe.
+     The PNG background was removed online, so no blending trick is needed. */
+  .cert-sig .sig-ink { margin: 0 auto 2px; background: no-repeat; }
+  .cert-sig .sig-ink.ceo {
+    width: 150px; height: 72px;
+    background-image: url('Real%202%20signatures.png');
+    background-size: 117.6% 250%;      /* crop: x .10 y .55 w .85 h .40 */
+    background-position: 66.7% 91.7%;
+  }
+  .cert-sig .sig-ink.director {
+    width: 150px; height: 62px;
+    background-image: url('Real%202%20signatures.png');
+    background-size: 111.1% 357.1%;    /* crop: x .05 y .03 w .90 h .28 */
+    background-position: 50% 4.2%;
+  }
   .cert-sig .sig-line { border-top: 1.5px solid #1b2a4a; margin: 2px auto 4px; width: 190px; padding-top: 4px; font-size: .78rem; font-weight: 700; }
   .cert-sig .sig-role { font-size: .72rem; letter-spacing: 1px; text-transform: uppercase; color: #5a6478; }
   .cert-sig .sig-sub { font-size: .62rem; color: #5a6478; margin-top: 2px; }
@@ -67,7 +78,7 @@
     width: 126px; height: 126px;
     display: flex; align-items: center; justify-content: center;
   }
-  .cert-stamp img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+  .cert-stamp img { width: 100%; height: 100%; object-fit: contain; }
 
   .cert-foot {
     margin-top: 24px; padding-top: 10px; border-top: 1px solid rgba(27,42,74,.25);
@@ -137,8 +148,9 @@
               </div>
             </div>
             <div style="display:flex;align-items:center;gap:12px">
+              <!-- centre row per the supervisor's reference: stamp LEFT, logo MIDDLE, QR RIGHT -->
+              <div class="cert-stamp"><img src="Real%20Stamp.png" alt="Official Up Skills Hub stamp"></div>
               <img class="cert-logo" src="Logo%20Image.jpeg" alt="Up Skills Hub logo">
-              <div class="cert-stamp"><img src="Stamp.jpeg" alt="Official Up Skills Hub stamp"></div>
               <div style="text-align:center">
                 <div class="qr" id="c-qr"></div>
                 <div style="font-size:.62rem;color:#5a6478;font-family:Lato,sans-serif;margin-top:5px">Scan to verify</div>
