@@ -27,6 +27,13 @@ const certId = params.get('id');
     document.getElementById('c-status').innerHTML = statusBadge(c.status);
     document.getElementById('d-status').innerHTML = statusBadge(c.status);
 
+    /* swap the logo for a background-free version (white JPEG corners removed) */
+    if (typeof loadLogoTransparent === 'function') {
+      loadLogoTransparent().then(u => {
+        if (u) document.querySelector('.cert-logo').src = u;
+      });
+    }
+
     /* QR code -> public verification URL */
     new QRCode(document.getElementById('c-qr'), {
       text: c.verifyUrl, width: 110, height: 110,
