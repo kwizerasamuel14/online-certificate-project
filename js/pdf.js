@@ -276,10 +276,27 @@ async function loadInkCrop(src, crop, opts = {}) {
     canvas.width = cw; canvas.height = ch;
     const ctx = canvas.getContext('2d');
     ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
+    // Detect whether the source PNG already has a transparent background
+    // (e.g. exported from an online background remover). Transparent pixels
+    // read back as BLACK with alpha 0 on canvas — if we luma-key them we'd
+    // turn the removed background into opaque black. So for transparent
+    // sources we KEEP the existing alpha (it already encodes the ink shape)
+    // and only un-premultiply the colour; for opaque scans we luma-key as before.
     const frame = ctx.getImageData(0, 0, cw, ch);
     const px = frame.data;
+    let transparentSource = false;
+    for (let i = 3; i < px.length; i += 4) {
+      if (px[i] < 16) { transparentSource = true; break; }   // any fully transparent pixel
+    }
     const hi = opts.hi ?? 215, lo = opts.lo ?? 135; // luma key thresholds
     for (let i = 0; i < px.length; i += 4) {
+      if (transparentSource) {
+        // honour the PNG's own alpha; darken RGB so semi-transparent edges stay ink-coloured
+        if (px[i + 3] > 0 && px[i + 3] < 255) {
+          px[i] = px[i + 1] = px[i + 2] = Math.min(px[i], px[i + 1], px[i + 2]);
+        }
+        continue;
+      }
       const luma = 0.299 * px[i] + 0.587 * px[i + 1] + 0.114 * px[i + 2];
       let a = (255 * (hi - luma)) / (hi - lo);
       px[i + 3] = a < 0 ? 0 : a > 255 ? 255 : a;
