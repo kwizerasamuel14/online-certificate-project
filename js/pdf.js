@@ -46,14 +46,17 @@ async function downloadCertificatePDF(c) {
   }
   const logoDataUrl = await loadCircularLogo();
 
-  // supervisor-provided scans: handwritten signatures ("2 signatures.jpeg",
-  // top = FOUNDER & CEO, bottom = PROGRAM DIRECTOR) and the official stamp
-  const sigCeo = await loadInkCrop('2%20signatures.jpeg',
-    { x: 0.02, y: 0.045, w: 0.96, h: 0.26 }, { hi: 215, lo: 135 });
-  const sigDirector = await loadInkCrop('2%20signatures.jpeg',
-    { x: 0.08, y: 0.585, w: 0.90, h: 0.365 }, { hi: 215, lo: 135 });
-  const stampImg = await loadInkCrop('Stamp.jpeg',
-    { x: 0.03, y: 0.02, w: 0.94, h: 0.96 }, { hi: 200, lo: 105 });
+  // supervisor-provided scans, backgrounds already removed:
+  // "Real 2 signatures.png" (top = FOUNDER & CEO, bottom = PROGRAM DIRECTOR)
+  // and the official stamp "Real Stamp.png"
+  // top signature in the scan = Christophe (Program Director),
+  // bottom signature in the scan = Clarisse (Founder & CEO)
+  const sigClarisse = await loadInkCrop('Real%202%20signatures.png',
+    { x: 0.10, y: 0.55, w: 0.85, h: 0.40 }, { hi: 230, lo: 120 });
+  const sigChristophe = await loadInkCrop('Real%202%20signatures.png',
+    { x: 0.05, y: 0.03, w: 0.90, h: 0.28 }, { hi: 230, lo: 120 });
+  const stampImg = await loadInkCrop('Real%20Stamp.png',
+    { x: 0.05, y: 0.05, w: 0.90, h: 0.90 }, { hi: 215, lo: 110 });
 
   // parchment background
   doc.setFillColor(PALE);
@@ -120,13 +123,13 @@ async function downloadCertificatePDF(c) {
   doc.setFontSize(9); doc.setTextColor(NAVY);
 
   // scanned handwritten signatures in the spaces above the lines
-  if (sigCeo) {
-    const sw = 32, sgh = sw * sigCeo.ratio;
-    doc.addImage(sigCeo.url, 'PNG', 60 - sw / 2, rowY - 2 - sgh, sw, sgh);
+  if (sigClarisse) {
+    const sw = 32, sgh = sw * sigClarisse.ratio;
+    doc.addImage(sigClarisse.url, 'PNG', 60 - sw / 2, rowY - 2 - sgh, sw, sgh);
   }
-  if (sigDirector) {
-    const sw = 30, sgh = sw * sigDirector.ratio;
-    doc.addImage(sigDirector.url, 'PNG', W - 60 - sw / 2, rowY - 2 - sgh, sw, sgh);
+  if (sigChristophe) {
+    const sw = 30, sgh = sw * sigChristophe.ratio;
+    doc.addImage(sigChristophe.url, 'PNG', W - 60 - sw / 2, rowY - 2 - sgh, sw, sgh);
   }
 
   // left signature
@@ -144,24 +147,24 @@ async function downloadCertificatePDF(c) {
   doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(GREY);
   doc.text('PROGRAM DIRECTOR', W - 60, rowY + 8, { align: 'center' });
 
-  // centre: enlarged logo (restored) with the official stamp scan next to it,
-  // in the circular space reserved on the official template
+  // centre row, per the supervisor's reference: enlarged logo on the LEFT,
+  // official stamp in the MIDDLE, QR code on the RIGHT
   if (logoDataUrl) {
     try {
       const ls = 34; // enlarged logo
-      doc.addImage(logoDataUrl, 'PNG', cx - ls / 2 - 4, rowY - ls / 2, ls, ls);
+      doc.addImage(logoDataUrl, 'PNG', cx - 20 - ls / 2, rowY - ls / 2, ls, ls);
     } catch (e) { /* logo optional */ }
   }
   if (stampImg) {
     try {
-      const ss = 27, st = ss * stampImg.ratio;
-      doc.addImage(stampImg.url, 'PNG', cx + 4, rowY - st / 2, ss, st);
+      const ss = 26, st = ss * stampImg.ratio;
+      doc.addImage(stampImg.url, 'PNG', cx - ss / 2, rowY - st / 2, ss, st);
     } catch (e) { /* fall through to drawn seal */ }
   }
   if (!stampImg) {
     // fallback: drawn circular OFFICIAL seal with the logo inside
     doc.setDrawColor(NAVY); doc.setLineWidth(0.6);
-    doc.circle(cx + 15, rowY, 11, 'S');
+    doc.circle(cx, rowY, 11, 'S');
     doc.setFont('helvetica', 'bold'); doc.setFontSize(3.2); doc.setTextColor(NAVY);
     const stampLabel = '· OFFICIAL · UP SKILLS HUB ';
     (function stampRingText() {
@@ -169,16 +172,16 @@ async function downloadCertificatePDF(c) {
       const chars = stampLabel.split('');
       chars.forEach((ch, i) => {
         const a = (start + (sweep / (chars.length - 1)) * i) * Math.PI / 180;
-        doc.text(ch, cx + 15 + radius * Math.cos(a), rowY + radius * Math.sin(a) + 1, { align: 'center' });
+        doc.text(ch, cx + radius * Math.cos(a), rowY + radius * Math.sin(a) + 1, { align: 'center' });
       });
     })();
     if (!logoDataUrl) {
       doc.setDrawColor(GOLD); doc.setLineWidth(0.3);
-      doc.circle(cx + 15, rowY, 9.2, 'S');
+      doc.circle(cx, rowY, 9.2, 'S');
       doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(NAVY);
-      doc.text('USH', cx + 15, rowY + 1, { align: 'center' });
+      doc.text('USH', cx, rowY + 1, { align: 'center' });
       doc.setFontSize(4.5);
-      doc.text('UP SKILLS HUB', cx + 15, rowY + 5, { align: 'center' });
+      doc.text('UP SKILLS HUB', cx, rowY + 5, { align: 'center' });
     }
   }
 
@@ -195,7 +198,7 @@ async function downloadCertificatePDF(c) {
     const verifyTarget = c.verifyUrl || ('https://upskillshub.com/verify/' + c.certificateNumber);
     const qrDataUrl = await makeQrDataUrl(verifyTarget);
     if (qrDataUrl) {
-      const qs = 22, qx = cx + 20, qy = rowY - 11;
+      const qs = 22, qx = cx + 22, qy = rowY - 11;
       // white backing box (scan contrast) with a thin navy border
       doc.setFillColor('#ffffff');
       doc.rect(qx - 2, qy - 2, qs + 4, qs + 4, 'F');
