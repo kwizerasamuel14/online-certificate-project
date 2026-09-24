@@ -20,33 +20,16 @@ async function downloadCertificatePDF(c) {
 
   const NAVY = '#1b2a4a', GOLD = '#b3924f', PALE = '#faf6ea', GREY = '#5a6478';
 
-  // load the logo and knock its white JPEG background out to transparent.
-  // The badge interior is cream (#faf6ea), NOT white — the two are separated
-  // via the blue channel (white B=255, cream B≈234), so the cream fill and
-  // the coloured emblem survive and only the true white background vanishes.
+  // load the transparent-background logo (logo.png, generated from the
+  // original JPEG with make-transparent-logo.mjs — white background and
+  // halo fully removed at the source, so no canvas post-processing needed).
   async function loadLogoImage() {
     return new Promise((resolve, reject) => {
       const im = new Image();
       im.onload = () => resolve(im);
       im.onerror = reject;
-      im.src = 'Logo%20Image.jpeg';
+      im.src = 'logo.png';
     });
-  }
-  function keyWhiteToTransparent(canvas) {
-    const ctx = canvas.getContext('2d');
-    const frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const px = frame.data;
-    for (let i = 0; i < px.length; i += 4) {
-      const b = px[i + 2];
-      let a = (251 - b) * 255 / 16;   // white → 0 alpha, cream → 255
-      a = a < 0 ? 0 : a > 255 ? 255 : a;
-      // never fade strongly-coloured pixels (e.g. the green arc)
-      if (Math.abs(px[i] - px[i + 1]) > 18 || Math.abs(px[i + 1] - px[i + 2]) > 18) {
-        a = Math.max(a, px[i + 3]);
-      }
-      px[i + 3] = a;
-    }
-    ctx.putImageData(frame, 0, 0);
   }
   async function loadCircularLogo() {
     try {
@@ -61,7 +44,6 @@ async function downloadCertificatePDF(c) {
       ctx.clip();
       ctx.drawImage(img, 0, 0, size, size);
       ctx.restore();
-      keyWhiteToTransparent(canvas);
       return canvas.toDataURL('image/png');
     } catch (e) { return null; }
   }
@@ -74,7 +56,6 @@ async function downloadCertificatePDF(c) {
       const size = 500, canvas = document.createElement('canvas');
       canvas.width = size; canvas.height = size;
       canvas.getContext('2d').drawImage(img, 0, 0, size, size);
-      keyWhiteToTransparent(canvas);
       return canvas.toDataURL('image/png');
     } catch (e) { return null; }
   };
