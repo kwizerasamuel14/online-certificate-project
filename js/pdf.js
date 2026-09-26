@@ -138,12 +138,15 @@ async function downloadCertificatePDF(c) {
   doc.setFontSize(9); doc.setTextColor(NAVY);
 
   // scanned handwritten signatures in the spaces above the lines
+  // same visual size as the online view (certificate-details.html):
+  // 150px ink on a 190px line ↔ 47.4mm ink on a 60mm line, and the
+  // online ink boxes are 150×72 (CEO) and 150×62 (Director).
   if (sigClarisse) {
-    const sw = 32, sgh = sw * sigClarisse.ratio;
+    const sw = 47.4, sgh = sw * (72 / 150);
     doc.addImage(sigClarisse.url, 'PNG', 60 - sw / 2, rowY - 2 - sgh, sw, sgh);
   }
   if (sigChristophe) {
-    const sw = 30, sgh = sw * sigChristophe.ratio;
+    const sw = 47.4, sgh = sw * (62 / 150);
     doc.addImage(sigChristophe.url, 'PNG', W - 60 - sw / 2, rowY - 2 - sgh, sw, sgh);
   }
 
