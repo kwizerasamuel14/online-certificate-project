@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Requested Certificates (Trainer) — Up Skills Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="header"></div>
+<main>
+  <div class="page-head">
+    <div>
+      <h1>All Requested Certificates</h1>
+      <p>Review each trainee request, add your comment, and recommend it for admin approval.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:16px">
+        <div class="field" style="flex:1;min-width:220px;margin:0">
+          <label for="searchBox">Search</label>
+          <input type="search" id="searchBox" placeholder="Search by name, request # or course…">
+        </div>
+        <div class="field" style="width:200px;margin:0">
+          <label for="statusFilter">Filter by status</label>
+          <select id="statusFilter">
+            <option value="">All statuses</option>
+            <option value="pending">Pending Review</option>
+            <option value="recommended">Trainer Recommended</option>
+            <option value="approved">Approved</option>
+            <option value="generated">Generated</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <button class="btn btn-ghost" id="resetBtn">Reset</button>
+      </div>
+      <div id="listLoading" class="loading"><div class="spinner"></div>Loading…</div>
+      <div id="listEmpty" class="empty-state" style="display:none">
+        <div class="icon">🗂️</div><p>No requests match your search.</p>
+      </div>
+      <div id="listWrap" class="table-wrap" style="display:none"></div>
+    </div>
+  </div>
+</main>
+<div id="footer"></div>
+
+<div class="modal-overlay" id="reviewModal">
+  <div class="modal">
+    <div class="modal-head"><h3>Trainer Review &amp; Recommend</h3><button class="modal-close" onclick="document.getElementById('reviewModal').classList.remove('open')">✕</button></div>
+    <div class="modal-body">
+      <p style="font-size:.9rem;color:var(--muted);margin-top:0">
+        Step 3 &amp; 4 of the workflow: review the request, write your comment, then recommend it.
+        The admin can only approve requests that a trainer has recommended.
+      </p>
+      <div class="field">
+        <label for="reviewComment">Your review comment (required)</label>
+        <textarea id="reviewComment" rows="4" placeholder="e.g. Completed all assigned tasks; final project meets the required standard. Recommend approval."></textarea>
+        <p id="reviewError" class="error-msg"></p>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:14px">
+        <button class="btn btn-ghost" id="closeReview">Cancel</button>
+        <button class="btn btn-primary" id="confirmRecommend">✔ Recommend for Approval</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="data/mock-data.js?v=20260926-1"></script>
+<script src="js/api.js?v=20260926-1"></script>
+<script src="js/layout.js?v=20260926-1"></script>
+<script src="js/trainer.js?v=20260926-1"></script>
+<script>initPage('trainer');</script>
+</body>
+</html>

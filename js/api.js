@@ -127,14 +127,38 @@ const API = {
 
   /* ---- Trainer / Admin workflow ---- */
 
-  /** POST — trainer recommends a pending request */
-  async recommendRequest(id) {
+  /** POST — trainer reviews a pending request (records the review comment) */
+  async reviewRequest(id, comment) {
+    await delay();
+    const db = store();
+    const r = db.requests.find(x => x.id === id);
+    if (!r) throw new Error('Request not found');
+    if (r.status !== 'pending') throw new Error('Only pending requests can be reviewed.');
+    r.trainerReview = {
+      comment: (comment || '').trim(),
+      reviewedBy: 'Trainer',
+      reviewedAt: new Date().toISOString(),
+    };
+    save(db);
+    return { ...r };
+  },
+
+  /** POST — trainer recommends a pending request (comment is mandatory) */
+  async recommendRequest(id, comment = '') {
     await delay();
     const db = store();
     const r = db.requests.find(x => x.id === id);
     if (!r || r.status !== 'pending') throw new Error('Only pending requests can be recommended.');
+    if (!(comment || '').trim()) {
+      throw new Error('A trainer review comment is required before recommending.');
+    }
     r.status = 'recommended';
     r.recommendedAt = new Date().toISOString();
+    r.trainerReview = {
+      comment: comment.trim(),
+      reviewedBy: 'Trainer',
+      reviewedAt: new Date().toISOString(),
+    };
     save(db);
     return { ...r };
   },

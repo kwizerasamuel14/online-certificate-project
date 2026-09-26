@@ -1,8 +1,8 @@
 /* =====================================================
-   admin.js — Admin Certificate Management.
-   Combined list of requests (workflow) + certificates,
-   with search, filter, recommend, approve+generate,
-   revoke, download, email.
+   trainer.js — Trainer: All Requested Certificates.
+   The trainer reviews each pending request, writes a
+   mandatory comment, then recommends it. Admin can only
+   approve requests that the trainer has recommended.
    ===================================================== */
 
 const $ = id => document.getElementById(id);
@@ -32,8 +32,7 @@ function render() {
   if (st) rows = rows.filter(r => r.status === st);
   if (q) rows = rows.filter(r =>
     r.fullName.toLowerCase().includes(q) || r.id.toLowerCase().includes(q) ||
-    r.program.toLowerCase().includes(q) ||
-    (r.certificate && r.certificate.certificateNumber.toLowerCase().includes(q)));
+    r.program.toLowerCase().includes(q));
 
   if (!rows.length) { $('listEmpty').style.display = 'block'; return; }
   $('listWrap').style.display = 'block';
@@ -41,31 +40,24 @@ function render() {
   $('listWrap').innerHTML = `
     <table class="data-table">
       <thead><tr>
-        <th>Req / Cert</th><th>Student</th><th>Program</th><th>Status</th><th>Actions</th>
+        <th>Request</th><th>Student</th><th>Program</th><th>Status</th><th>My Comment</th><th>Actions</th>
       </tr></thead>
       <tbody>${rows.map(r => {
-        const c = r.certificate;
+        const review = r.trainerReview;
         const actions = [];
         actions.push(`<button class="btn btn-sm btn-outline" onclick="viewReq('${r.id}')">View</button>`);
         if (r.status === 'pending')
-          actions.push(`<span style="font-size:.82rem;color:var(--muted)" title="The trainer must review & recommend first">⏳ Awaiting trainer recommendation</span>`);
+          actions.push(`<button class="btn btn-sm btn-primary" onclick="openReview('${r.id}')">🧑‍🏫 Review &amp; Recommend</button>`);
         if (r.status === 'recommended')
-          actions.push(`<button class="btn btn-sm btn-primary" onclick="approveGenerate('${r.id}')">🎓 Approve & Generate</button>`);
-        if (c && (c.status === 'generated' || c.status === 'approved')) {
-          actions.push(`<button class="btn btn-sm btn-secondary" onclick="regenerate('${c.id}')">🔄 Generate PDF</button>`);
-          actions.push(`<button class="btn btn-sm btn-ghost" onclick="emailCert('${c.id}')">✉ Email</button>`);
-          actions.push(`<button class="btn btn-sm btn-danger" onclick="openRevoke('${c.id}')">🚫 Revoke</button>`);
-        }
-        if (c) actions.push(`<a class="btn btn-sm btn-outline" href="certificate-details.html?id=${c.id}">Details</a>`);
+          actions.push(`<span style="font-size:.82rem;color:var(--muted)">Waiting for admin approval</span>`);
         return `
           <tr>
-            <td>
-              <strong>${r.id}</strong><br>
-              ${c ? `<span style="font-size:.78rem;color:var(--primary)">${c.certificateNumber}</span>` : '—'}
-            </td>
+            <td><strong>${r.id}</strong><br>
+                <span style="font-size:.78rem;color:var(--muted)">${formatDate(r.submittedAt)}</span></td>
             <td>${r.fullName}<br><span style="font-size:.78rem;color:var(--muted)">${r.email || ''}</span><br><span style="font-size:.78rem;color:var(--muted)">${r.traineeId}</span></td>
-            <td style="max-width:220px">${r.program}</td>
+            <td style="max-width:200px">${r.program}</td>
             <td>${statusBadge(r.status)}</td>
+            <td style="max-width:220px;font-size:.85rem">${review ? escapeHtml(review.comment) : '<span style="color:var(--muted)">—</span>'}</td>
             <td style="white-space:nowrap">
               <div style="display:flex;gap:6px;flex-wrap:wrap">${actions.join('')}</div>
             </td>
@@ -75,9 +67,15 @@ function render() {
     </table>`;
 }
 
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
 function viewReq(id) {
   const r = records.find(x => x.id === id);
   if (!r) return;
+  const review = r.trainerReview;
   openModal('Request — ' + r.id, `
     <dl style="display:grid;grid-template-columns:160px 1fr;gap:8px 12px;font-size:.92rem">
       <dt><strong>Name</strong></dt><dd>${r.fullName} (${r.email})</dd>
@@ -91,65 +89,45 @@ function viewReq(id) {
       ${r.liveLink ? `<dt><strong>Live link</strong></dt><dd><a href="${r.liveLink}" target="_blank">${r.liveLink}</a></dd>` : ''}
       ${r.finalReport ? `<dt><strong>Final report</strong></dt><dd>📎 ${r.finalReport}</dd>` : ''}
       <dt><strong>Status</strong></dt><dd>${statusBadge(r.status)}</dd>
-      ${r.trainerReview ? `<dt><strong>Trainer review</strong></dt><dd>${escapeHtml(r.trainerReview.comment)}<br>
-        <span style="font-size:.78rem;color:var(--muted)">${r.trainerReview.reviewedBy || 'Trainer'}, ${formatDate(r.trainerReview.reviewedAt)}</span></dd>` : ''}
+      ${review ? `<dt><strong>My review</strong></dt><dd>${escapeHtml(review.comment)}<br>
+        <span style="font-size:.78rem;color:var(--muted)">— ${review.reviewedBy}, ${formatDate(review.reviewedAt)}</span></dd>` : ''}
     </dl>`);
 }
 
-/* Trainer-only step: admins cannot recommend. Requests must be
-   recommended by a trainer (with a comment) before approval. */
-
-function escapeHtml(s) {
-  return String(s || '').replace(/[&<>"']/g, c =>
-    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+/* ---------- Review & Recommend modal ---------- */
+let reviewTarget = null;
+function openReview(id) {
+  const r = records.find(x => x.id === id);
+  if (!r) return;
+  reviewTarget = id;
+  $('reviewError').style.display = 'none';
+  $('reviewComment').value = '';
+  $('reviewModal').classList.add('open');
+  setTimeout(() => $('reviewComment').focus(), 50);
 }
-
-async function approveGenerate(id) {
-  try {
-    const cert = await API.approveAndGenerate(id);
-    toast(`Certificate ${cert.certificateNumber} generated & student notified.`);
-    load();
-  } catch (e) { toast(e.message, 'error'); }
-}
-
-async function regenerate(id) {
-  try {
-    await API.generateCertificate(id);           // refresh status + issue data
-    const cert = await API.getCertificate(id);   // fetch full record
-    await downloadCertificatePDF(cert);          // real PDF -> browser download
-    toast('Certificate PDF regenerated & downloaded.');
-    load();
+$('closeReview').onclick = () => $('reviewModal').classList.remove('open');
+$('confirmRecommend').onclick = async () => {
+  const comment = $('reviewComment').value.trim();
+  if (!comment) {
+    $('reviewError').textContent = 'A review comment is required before you can recommend this request.';
+    $('reviewError').style.display = 'block';
+    return;
   }
-  catch (e) { toast(e.message, 'error'); }
-}
-
-async function emailCert(id) {
   try {
-    const res = await API.sendByEmail(id);
-    toast(`Certificate emailed to ${res.email}.`);
-  } catch (e) { toast(e.message, 'error'); }
-}
-
-let revokeTarget = null;
-function openRevoke(certId) {
-  revokeTarget = certId;
-  $('revokeReason').value = '';
-  $('revokeModal').classList.add('open');
-}
-$('confirmRevoke').onclick = async () => {
-  try {
-    await API.revokeCertificate(revokeTarget, $('revokeReason').value.trim());
-    $('revokeModal').classList.remove('open');
-    toast('Certificate revoked.', 'error');
+    await API.recommendRequest(reviewTarget, comment);
+    $('reviewModal').classList.remove('open');
+    toast('Request reviewed & recommended — waiting for admin approval.');
     load();
-  } catch (e) { toast(e.message, 'error'); }
+  } catch (e) {
+    $('reviewError').textContent = e.message;
+    $('reviewError').style.display = 'block';
+  }
 };
 
 $('searchBox').addEventListener('input', render);
 $('statusFilter').addEventListener('change', render);
 $('resetBtn').onclick = () => { $('searchBox').value = ''; $('statusFilter').value = ''; render(); };
 
-/* shared modal helper (same as student page) */
 function openModal(title, bodyHtml) {
   let overlay = document.querySelector('.modal-overlay.modal-dyn');
   if (!overlay) {

@@ -17,7 +17,7 @@ const DEFAULT_ACCOUNTS = {
     password: 'Trainer1',
     name: 'Trainer',
     displayName: 'Trainer',
-    redirect: 'admin-certificates.html',
+    redirect: 'trainer-certificates.html',
     canChangePassword: true,
   },
   admin: {
