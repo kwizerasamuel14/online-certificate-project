@@ -46,7 +46,7 @@ const PAGE_ACCESS = {
   request: null,   // public — no login required to request a certificate
   details: null,   // public — certificate details reached via Verify
   mine:    ['user', 'trainer', 'admin'],
-  trainer: ['trainer'],   // trainer-only: All Requested Certificates
+  trainer: ['trainer', 'admin'],   // admin may open it (e.g. by URL); nav link is trainer-only
   admin:   ['admin'],
 };
 
