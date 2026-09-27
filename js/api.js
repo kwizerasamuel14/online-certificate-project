@@ -174,7 +174,7 @@ const API = {
 
     const cert = {
       id: 'CERT-' + String(db.nextCertId++).padStart(5, '0'),
-      certificateNumber: CertificateNumber.generate(r),
+      certificateNumber: CertificateNumber.generate(r, db),
       requestRef: r.id,
       studentName: r.fullName,
       studentEmail: r.email,
@@ -300,9 +300,14 @@ const CertificateNumber = {
     if (!program) return 'GN';
     return this.prefixes[program.split('/').pop().trim()] || 'GN';
   },
-  generate(request) {
+  generate(request, db) {
     const year = new Date().getFullYear();
-    const db = JSON.parse(localStorage.getItem('ush_cert_db'));
+    // Guard against a stale counter: never reuse a number already issued.
+    const maxExisting = (db.certificates || []).reduce((m, c) => {
+      const seq = Number(String(c.certificateNumber || '').split('-').pop());
+      return Number.isFinite(seq) && seq > m ? seq : m;
+    }, 0);
+    if (maxExisting >= db.nextSeq) db.nextSeq = maxExisting + 1;
     const seq = String(db.nextSeq++).padStart(6, '0');
     return `USH-${year}-${this.codeFor(request.program)}-${seq}`;
   },
